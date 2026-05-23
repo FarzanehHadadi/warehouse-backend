@@ -1,0 +1,27 @@
+# Binaries for programs and plugins
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+coverage.out
+coverage.html
+vendor
+# Built helper binary (use `go run ./scripts/generate_key.go`)
+scripts/generate_key
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+__pycache__
+.pytest_cache
+.env
+.venv
+env
+venv
