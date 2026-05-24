@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 	"warehouse/pkg/models"
 	"warehouse/pkg/repository"
 
@@ -9,6 +10,24 @@ import (
 )
 
 func (h *Handler) HandleGetCategory(c *gin.Context) {
+	catId := c.Param("categoryId")
+	if catId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "category id is required"})
+	}
+	id, err := strconv.ParseInt(catId, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid category id"})
+		return
+	}
+
+	cat, err := h.Repository.Category.FindByID(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"data": cat,
+	})
 }
 func (h *Handler) HandlePostCategory(c *gin.Context) {
 	var cat *models.Category
@@ -30,7 +49,7 @@ func (h *Handler) HandlePostCategory(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, cat)
+	c.JSON(http.StatusCreated, cat)
 
 }
 func (h *Handler) HandleDeleteCategory(c *gin.Context)    {}

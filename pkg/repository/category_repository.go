@@ -27,7 +27,12 @@ func (cr *categoryRepository) Create(cat *models.Category) (*models.Category, er
 	return cat, nil
 }
 func (cr *categoryRepository) FindByID(id uint) (*models.Category, error) {
-	return nil, nil
+	var cat *models.Category
+	result := cr.db.First(&cat, id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return cat, nil
 }
 func (cr *categoryRepository) Delete(id uint) error {
 	return nil
