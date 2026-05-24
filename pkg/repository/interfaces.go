@@ -15,7 +15,8 @@ type CategoryRepository interface {
 	Create(cat *models.Category) (*models.Category, error)
 	FindByID(id uint) (*models.Category, error)
 	Delete(id uint) error
-	Update(cat *models.Category) (*models.Category, error)
+	Update(id uint, cat *models.Category) error
+	GetList() ([]models.Category, error)
 }
 
 // Repository holds all repositories

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"time"
 
 	"github.com/lib/pq"
 	"gorm.io/gorm"
@@ -9,6 +10,8 @@ import (
 
 var (
 	ErrDuplicateKey = errors.New("Duplicate Key")
+	ErrNotFound     = errors.New("item not found")
+	databaseTimeout = time.Second * 30
 )
 
 func NewRepository(db *gorm.DB) *Repository {

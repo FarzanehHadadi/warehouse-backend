@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"warehouse/pkg/models"
 
 	"gorm.io/gorm"
@@ -35,15 +36,36 @@ func (cr *categoryRepository) FindByID(id uint) (*models.Category, error) {
 	return cat, nil
 }
 func (cr *categoryRepository) Delete(id uint) error {
-	_, err := cr.FindByID(id)
-	if err != nil {
-		return err
-	}
 
 	result := cr.db.Delete(&models.Category{}, id)
-
+	if result.RowsAffected == 0 {
+		return ErrNotFound
+	}
 	return result.Error
 }
-func (cr *categoryRepository) Update(cat *models.Category) (*models.Category, error) {
-	return nil, nil
+func (cr *categoryRepository) Update(id uint, cat *models.Category) error {
+
+	result := cr.db.Model(&models.Category{}).Where("id = ?", id).Updates(cat)
+
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+func (cr *categoryRepository) GetList() ([]models.Category, error) {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), databaseTimeout)
+	defer cancelFunc()
+	var categories []models.Category
+	result := cr.db.WithContext(ctx).Find(&categories)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if categories == nil {
+		return []models.Category{}, nil
+	}
+	return categories, nil
+
 }
