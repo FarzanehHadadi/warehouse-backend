@@ -35,7 +35,14 @@ func (cr *categoryRepository) FindByID(id uint) (*models.Category, error) {
 	return cat, nil
 }
 func (cr *categoryRepository) Delete(id uint) error {
-	return nil
+	_, err := cr.FindByID(id)
+	if err != nil {
+		return err
+	}
+
+	result := cr.db.Delete(&models.Category{}, id)
+
+	return result.Error
 }
 func (cr *categoryRepository) Update(cat *models.Category) (*models.Category, error) {
 	return nil, nil

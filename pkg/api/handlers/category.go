@@ -52,6 +52,25 @@ func (h *Handler) HandlePostCategory(c *gin.Context) {
 	c.JSON(http.StatusCreated, cat)
 
 }
-func (h *Handler) HandleDeleteCategory(c *gin.Context)    {}
+func (h *Handler) HandleDeleteCategory(c *gin.Context) {
+	catId := c.Param("categoryId")
+	if catId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "category id is required"})
+	}
+	id, err := strconv.ParseInt(catId, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid category id"})
+		return
+	}
+	if err := h.Repository.Category.Delete(uint(id)); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+
+	}
+	c.JSON(http.StatusNoContent, nil)
+
+}
 func (h *Handler) HandlePatchCategory(c *gin.Context)     {}
 func (h *Handler) HandleGetListCategories(c *gin.Context) {}
