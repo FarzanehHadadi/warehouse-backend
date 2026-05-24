@@ -1,17 +1,42 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"warehouse/pkg/api/handlers"
+	"warehouse/pkg/repository"
 
-func NewRouter() *gin.Engine {
-	r := gin.Default()
+	"github.com/gin-gonic/gin"
+)
 
-	v1 := r.Group("/v1")
-	{
-		r.GET("/ping", CheckHealthHandler)
-		auth := v1.Group("/auth")
-		{
-			auth.POST("/login", HandleLogin)
-		}
+type Router struct {
+	*gin.Engine
+	handler *handlers.Handler
+}
+
+func NewRouter(repo *repository.Repository) *Router {
+	r := &Router{
+		Engine:  gin.Default(),
+		handler: handlers.NewHandler(repo),
 	}
+
+	r.setupRoutes()
 	return r
+}
+
+func (r *Router) setupRoutes() {
+	v1 := r.Group("/v1")
+
+	v1.GET("/ping", CheckHealthHandler)
+
+	auth := v1.Group("/auth")
+	{
+		auth.POST("/login", r.handler.HandleLogin)
+		// auth.POST("/register", r.handler.Register)
+		// Add more auth routes here
+	}
+
+	// Example: users group
+	// users := v1.Group("/users")
+	// {
+	//     users.GET("/:id", r.handler.GetUser)
+	// }
 }

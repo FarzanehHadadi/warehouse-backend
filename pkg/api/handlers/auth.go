@@ -1,14 +1,14 @@
-package api
+package handlers
 
 import (
 	"net/http"
-	"warehouse/pkg/models"
+	"warehouse/pkg/api/dto"
 
 	"github.com/gin-gonic/gin"
 )
 
-func HandleLogin(c *gin.Context) {
-	var user models.User
+func (h *Handler) HandleLogin(c *gin.Context) {
+	var user dto.UserDto
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -16,5 +16,6 @@ func HandleLogin(c *gin.Context) {
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, user)
 }
