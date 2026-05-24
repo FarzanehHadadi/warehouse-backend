@@ -3,6 +3,7 @@ module warehouse
 go 1.25.0
 
 require (
+	github.com/lib/pq v1.12.3
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
