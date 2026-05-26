@@ -10,6 +10,16 @@ import (
 	"warehouse/pkg/repository"
 )
 
+//	@title			Warehouse API
+//	@version		1.2
+//	@description	Warehouse Management System API
+
+//	@host		localhost:8080
+//	@BasePath	/v1
+
+// @securityDefinitions.apikey	Bearer
+// @in							header
+// @name						Authorization
 func main() {
 	// Database
 	dbConfig := database.DefaultConfig()

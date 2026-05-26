@@ -6,9 +6,9 @@ import (
 )
 
 type AppError struct {
-	StatusCode int    `json:"-"`
-	Code       string `json:"code"`
-	Message    string `json:"message"`
+	StatusCode int    `json:"-" swaggerignore:"true"`
+	Code       string `json:"code" example:"NOT_FOUND"`
+	Message    string `json:"message" example:"Resource not found"`
 }
 
 func (e *AppError) Error() string {

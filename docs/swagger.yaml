@@ -1,0 +1,197 @@
+basePath: /v1
+definitions:
+  dto.Category:
+    properties:
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
+    required:
+    - name
+    type: object
+  dto.ErrorResponse:
+    properties:
+      error:
+        properties:
+          code:
+            type: string
+          message:
+            type: string
+        type: object
+    type: object
+  dto.SuccessCategoriesResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
+    type: object
+  dto.SuccessCategoryResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.Category'
+    type: object
+  models.Category:
+    properties:
+      id:
+        type: integer
+      name:
+        minLength: 3
+        type: string
+    required:
+    - name
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Warehouse Management System API
+  title: Warehouse API
+  version: "1.2"
+paths:
+  /v1/categories:
+    get:
+      consumes:
+      - application/json
+      description: Get list of categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessCategoriesResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get list of categories
+      tags:
+      - Categories
+    post:
+      consumes:
+      - application/json
+      description: Create a category
+      parameters:
+      - description: Category object with updated data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content - Category successfully updated
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Create a category
+      tags:
+      - Categories
+  /v1/categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Delete a category
+      tags:
+      - Categories
+    get:
+      consumes:
+      - application/json
+      description: Get a single category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessCategoryResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get category by ID
+      tags:
+      - Categories
+    patch:
+      consumes:
+      - application/json
+      description: Modify a category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category object with updated data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content - Category successfully updated
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Modify a category
+      tags:
+      - Categories
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
