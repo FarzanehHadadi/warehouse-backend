@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/v1/categories": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get list of categories",
                 "consumes": [
                     "application/json"
@@ -44,6 +49,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create a category",
                 "consumes": [
                     "application/json"
@@ -93,6 +103,11 @@ const docTemplate = `{
         },
         "/v1/categories/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get a single category by its ID",
                 "consumes": [
                     "application/json"
@@ -129,6 +144,14 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete a category",
                 "consumes": [
                     "application/json"
@@ -174,6 +197,11 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Modify a category",
                 "consumes": [
                     "application/json"
@@ -295,7 +323,14 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
+        "ApiKeyAuth": {
+            "description": "Enter your API Key here",
+            "type": "apiKey",
+            "name": "X-API-Key",
+            "in": "header"
+        },
         "Bearer": {
+            "description": "Enter JWT with Bearer prefix",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

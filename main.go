@@ -8,6 +8,8 @@ import (
 	"warehouse/pkg/api"
 	"warehouse/pkg/database"
 	"warehouse/pkg/repository"
+
+	"github.com/joho/godotenv"
 )
 
 //	@title			Warehouse API
@@ -17,10 +19,21 @@ import (
 //	@host		localhost:8080
 //	@BasePath	/v1
 
-// @securityDefinitions.apikey	Bearer
-// @in							header
-// @name						Authorization
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name X-API-Key
+// @description Enter your API Key here
+
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Enter JWT with Bearer prefix
 func main() {
+	// env
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
+
 	// Database
 	dbConfig := database.DefaultConfig()
 	db, err := database.NewPostgresConfiguration(&dbConfig)

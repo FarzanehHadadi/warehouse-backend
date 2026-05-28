@@ -31,13 +31,16 @@ func (r *Router) setupRoutes() {
 	docs.SwaggerInfo.BasePath = "/"
 
 	v1 := r.Group("/v1")
+	v1.Use(middleware.ApiKeyAuth())
 	v1.GET("/ping", CheckHealthHandler)
 	auth := v1.Group("/auth")
 	{
 		auth.POST("/login", r.handler.HandleLogin)
 
 	}
+
 	categories := v1.Group("/categories")
+
 	{
 		categories.POST("/", r.handler.HandlePostCategory)
 		categories.GET("/", r.handler.HandleGetListCategories)

@@ -64,6 +64,8 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Get list of categories
       tags:
       - Categories
@@ -95,6 +97,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Create a category
       tags:
       - Categories
@@ -126,6 +130,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
       summary: Delete a category
       tags:
       - Categories
@@ -150,6 +157,8 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Get category by ID
       tags:
       - Categories
@@ -186,11 +195,19 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Modify a category
       tags:
       - Categories
 securityDefinitions:
+  ApiKeyAuth:
+    description: Enter your API Key here
+    in: header
+    name: X-API-Key
+    type: apiKey
   Bearer:
+    description: Enter JWT with Bearer prefix
     in: header
     name: Authorization
     type: apiKey
