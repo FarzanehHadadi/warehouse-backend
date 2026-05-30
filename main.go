@@ -3,9 +3,11 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"warehouse/pkg/api"
+	"warehouse/pkg/api/auth"
 	"warehouse/pkg/database"
 	"warehouse/pkg/repository"
 
@@ -43,7 +45,8 @@ func main() {
 
 	// Repository (now cleanly initialized in its own package)
 	repo := repository.NewRepository(db)
-
+	jwtSecretKey := os.Getenv("JWT_SECRET_KEY")
+	auth.LoadSecretKey([]byte(jwtSecretKey))
 	// API Router with handler
 	router := api.NewRouter(repo)
 
@@ -71,4 +74,5 @@ func main() {
 	waitForGracefulShutdown(errCh, srv, shutdownGracePeriod)
 }
 
-// Graceful shutdown function (kept the same)
+// Graceful shutdown func
+// tion (kept the same)

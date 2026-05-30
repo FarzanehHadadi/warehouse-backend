@@ -33,13 +33,13 @@ func LoadSecretKey(secret []byte) {
 
 }
 func JWtSigningKey() []byte {
-	signingMu.RLock()
-	defer signingMu.RUnlock()
 	if len(SecretKey) == 0 {
 		return nil
 	}
+	signingMu.RLock()
 	out := make([]byte, len(SecretKey))
 	copy(out, SecretKey)
+	signingMu.RUnlock()
 	return out
 
 }
@@ -57,9 +57,7 @@ func GenerateToken(userId uint) (string, error) {
 	if userId == 0 {
 		return "", fmt.Errorf("Invalid user id")
 	}
-	signingMu.Lock()
 	key := JWtSigningKey()
-	signingMu.Unlock()
 	if len(key) < MinJWTSecretKeyBytes {
 		return "", fmt.Errorf("Generated token is not valid")
 	}
@@ -80,7 +78,8 @@ func GenerateToken(userId uint) (string, error) {
 	return tokenString, nil
 }
 func ValidateToken(tokenString string) (*Claims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, JWTSignFunc(SecretKey))
+	key := JWtSigningKey()
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, JWTSignFunc(key))
 
 	if err != nil {
 		return nil, err

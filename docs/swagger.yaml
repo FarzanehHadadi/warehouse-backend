@@ -19,6 +19,11 @@ definitions:
             type: string
         type: object
     type: object
+  dto.SuccessAuthResponse:
+    properties:
+      token:
+        type: string
+    type: object
   dto.SuccessCategoriesResponse:
     properties:
       data:
@@ -30,6 +35,19 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/models.Category'
+    type: object
+  dto.UserDto:
+    properties:
+      mobile:
+        minLength: 11
+        type: string
+      password:
+        maxLength: 72
+        minLength: 3
+        type: string
+    required:
+    - mobile
+    - password
     type: object
   models.Category:
     properties:
@@ -48,6 +66,42 @@ info:
   title: Warehouse API
   version: "1.2"
 paths:
+  /v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login to warehouse
+      parameters:
+      - description: enter your phone number and password to login
+        in: body
+        name: loginInfo
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessAuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Login
+      tags:
+      - Auth
   /v1/categories:
     get:
       consumes:

@@ -22,7 +22,12 @@ func (r *userRepository) FindByID(id uint) (*models.User, error) {
 	return nil, nil
 }
 
-func (r *userRepository) FindByEmail(email string) (*models.User, error) {
+func (r *userRepository) FindByPhone(phone string, password string) (*models.User, error) {
+	var user *models.User
+	result := r.db.Where("phone = ?", phone).Where("password = ?", password).First(&user)
 
-	return nil, nil
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return user, nil
 }

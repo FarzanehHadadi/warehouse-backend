@@ -8,7 +8,7 @@ import (
 type UserRepository interface {
 	Create(user *models.User) error
 	FindByID(id uint) (*models.User, error)
-	FindByEmail(email string) (*models.User, error)
+	FindByPhone(email string, password string) (*models.User, error)
 	// Add more methods as needed
 }
 type CategoryRepository interface {
