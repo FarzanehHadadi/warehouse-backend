@@ -36,6 +36,25 @@ definitions:
       data:
         $ref: '#/definitions/models.Category'
     type: object
+  dto.SuccessUnitListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Unit'
+        type: array
+    type: object
+  dto.SuccessUnitResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.Unit'
+    type: object
+  dto.Unit:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
   dto.UserDto:
     properties:
       mobile:
@@ -55,6 +74,16 @@ definitions:
         type: integer
       name:
         minLength: 3
+        type: string
+    required:
+    - name
+    type: object
+  models.Unit:
+    properties:
+      id:
+        type: integer
+      name:
+        minLength: 1
         type: string
     required:
     - name
@@ -214,6 +243,7 @@ paths:
             $ref: '#/definitions/dto.ErrorResponse'
       security:
       - ApiKeyAuth: []
+      - Bearer: []
       summary: Get category by ID
       tags:
       - Categories
@@ -255,6 +285,139 @@ paths:
       summary: Modify a category
       tags:
       - Categories
+  /v1/units:
+    get:
+      consumes:
+      - application/json
+      description: Get list of units
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessUnitListResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get list of units
+      tags:
+      - Units
+    post:
+      consumes:
+      - application/json
+      description: Create a new unit
+      parameters:
+      - description: Unit Item
+        in: body
+        name: unit
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Unit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessUnitResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Create a new unit
+      tags:
+      - Units
+  /v1/units/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing unit
+      parameters:
+      - description: Unit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Delete unit
+      tags:
+      - Units
+    get:
+      consumes:
+      - application/json
+      description: Get a single unit by its ID
+      parameters:
+      - description: Unit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessUnitResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Get unit by ID
+      tags:
+      - Units
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing unit
+      parameters:
+      - description: Unit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Unit Item
+        in: body
+        name: unit
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Unit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Update an existing unit
+      tags:
+      - Units
 securityDefinitions:
   ApiKeyAuth:
     description: Enter your API Key here

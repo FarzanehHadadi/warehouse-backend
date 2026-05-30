@@ -15,6 +15,7 @@ import (
 //	@Tags			Categories
 //	@Accept			json
 //	 @Security     ApiKeyAuth
+//	 @Security     Bearer
 //	@Produce		json
 //	@Param			id	path		int	true	"Category ID"
 //	@Success		200	{object}	dto.SuccessCategoryResponse

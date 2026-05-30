@@ -18,6 +18,7 @@ func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		User:     NewUserRepository(db),
 		Category: NewCategoryRepository(db),
+		Unit:     NewUnitRepository(db),
 	}
 }
 func isDuplicateKeyError(err error) bool {

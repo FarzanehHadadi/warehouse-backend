@@ -43,13 +43,30 @@ func (r *Router) setupRoutes() {
 
 	{
 		categories.GET("/", r.handler.HandleGetListCategories)
-
-		categories.POST("/", middleware.JwtAuth(), r.handler.HandlePostCategory)
-		categoriesWithId := categories.Group("/:id", middleware.IDMiddleware())
+		protectedCategories := categories.Group("/", middleware.JwtAuth())
 		{
-			categoriesWithId.GET("/", r.handler.HandleGetCategory)
-			categoriesWithId.DELETE("/", r.handler.HandleDeleteCategory)
-			categoriesWithId.PATCH("/", r.handler.HandlePatchCategory)
+			protectedCategories.POST("/", r.handler.HandlePostCategory)
+			categoriesWithId := protectedCategories.Group("/:id", middleware.IDMiddleware())
+			{
+				categoriesWithId.GET("/", r.handler.HandleGetCategory)
+				categoriesWithId.DELETE("/", r.handler.HandleDeleteCategory)
+				categoriesWithId.PATCH("/", r.handler.HandlePatchCategory)
+			}
+		}
+	}
+	units := v1.Group("/units")
+	{
+		units.GET("/", r.handler.HandleGetUnitList)
+		protectedUnits := units.Group("/", middleware.JwtAuth())
+		{
+			protectedUnits.Use()
+			protectedUnits.POST("/", r.handler.HandlePostUnit)
+			unitsWithId := protectedUnits.Group("/:id", middleware.IDMiddleware())
+			{
+				unitsWithId.GET("/", r.handler.HandleGetUnitById)
+				unitsWithId.PATCH("/", r.handler.HandlePatchUnit)
+				unitsWithId.DELETE("/", r.handler.HandleDeleteUnit)
+			}
 		}
 
 	}
