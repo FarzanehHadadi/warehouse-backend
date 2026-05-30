@@ -44,6 +44,7 @@ func (h *Handler) HandleGetCategory(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	 @Security     ApiKeyAuth
+//	 @Security     Bearer
 //	@Param			category	body		dto.Category	true	"Category object with updated data"
 //	@Success		200			"No Content - Category successfully updated"
 //	@Failure		400			{object}	dto.ErrorResponse

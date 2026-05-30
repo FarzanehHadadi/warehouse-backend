@@ -52,6 +52,9 @@ const docTemplate = `{
                 "security": [
                     {
                         "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
                     }
                 ],
                 "description": "Create a category",

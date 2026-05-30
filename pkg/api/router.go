@@ -42,8 +42,9 @@ func (r *Router) setupRoutes() {
 	categories := v1.Group("/categories")
 
 	{
-		categories.POST("/", r.handler.HandlePostCategory)
 		categories.GET("/", r.handler.HandleGetListCategories)
+
+		categories.POST("/", middleware.JwtAuth(), r.handler.HandlePostCategory)
 		categoriesWithId := categories.Group("/:id", middleware.IDMiddleware())
 		{
 			categoriesWithId.GET("/", r.handler.HandleGetCategory)

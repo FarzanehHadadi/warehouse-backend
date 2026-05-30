@@ -99,6 +99,7 @@ paths:
             $ref: '#/definitions/dto.ErrorResponse'
       security:
       - ApiKeyAuth: []
+      - Bearer: []
       summary: Create a category
       tags:
       - Categories
