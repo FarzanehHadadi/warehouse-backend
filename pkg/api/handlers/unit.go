@@ -117,8 +117,12 @@ func (h *Handler) HandlePostUnit(c *gin.Context) {
 func (h *Handler) HandleDeleteUnit(c *gin.Context) {
 	id := GetIDFromContext(c)
 	if err := h.Repository.Unit.Delete(id); err != nil {
-		//TODO : add switch for errors
-		h.Response.InternalServerErr(c, err.Error())
+		switch err {
+		case repository.ErrNotFound:
+			h.Response.NotFoundErr(c, err.Error())
+		default:
+			h.Response.InternalServerErr(c, err.Error())
+		}
 		return
 	}
 	h.Response.NoContentResponse(c)
@@ -151,9 +155,13 @@ func (h *Handler) HandlePatchUnit(c *gin.Context) {
 		return
 	}
 	err := h.Repository.Unit.Update(id, unit)
-	//TODO : add switch for errors
 	if err != nil {
-		h.Response.InternalServerErr(c, err.Error())
+		switch err {
+		case repository.ErrNotFound:
+			h.Response.NotFoundErr(c, err.Error())
+		default:
+			h.Response.InternalServerErr(c, err.Error())
+		}
 		return
 	}
 	h.Response.NoContentResponse(c)
