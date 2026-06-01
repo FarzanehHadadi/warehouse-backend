@@ -25,10 +25,18 @@ type UnitRepository interface {
 	Update(unitId uint, unit *models.Unit) error
 	GetList() ([]models.Unit, error)
 }
+type DepartmentRepository interface {
+	Create(department *models.Department) (*models.Department, error)
+	FindByID(departmentId uint) (*models.Department, error)
+	Delete(departmentId uint) error
+	Update(departmentId uint, department *models.Department) error
+	GetList() ([]models.Department, error)
+}
 
 // Repository holds all repositories
 type Repository struct {
-	User     UserRepository
-	Category CategoryRepository
-	Unit     UnitRepository
+	User       UserRepository
+	Category   CategoryRepository
+	Unit       UnitRepository
+	Department DepartmentRepository
 }

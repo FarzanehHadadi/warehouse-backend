@@ -9,6 +9,24 @@ definitions:
     required:
     - name
     type: object
+  dto.Department:
+    properties:
+      manager_name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      name:
+        maxLength: 100
+        minLength: 1
+        type: string
+    type: object
+  dto.DepartmentListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
+    type: object
   dto.ErrorResponse:
     properties:
       error:
@@ -74,6 +92,21 @@ definitions:
         type: integer
       name:
         minLength: 3
+        type: string
+    required:
+    - name
+    type: object
+  models.Department:
+    properties:
+      id:
+        type: integer
+      manager_name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      name:
+        maxLength: 100
+        minLength: 1
         type: string
     required:
     - name
@@ -285,6 +318,161 @@ paths:
       summary: Modify a category
       tags:
       - Categories
+  /v1/departments:
+    get:
+      consumes:
+      - application/json
+      description: Get list of departments
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DepartmentListResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get list of departments
+      tags:
+      - Departments
+    post:
+      consumes:
+      - application/json
+      description: Create a department
+      parameters:
+      - description: Department object with updated data
+        in: body
+        name: department
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Department'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content - Department successfully updated
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Create a department
+      tags:
+      - Departments
+  /v1/departments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a department
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Delete a department
+      tags:
+      - Departments
+    get:
+      consumes:
+      - application/json
+      description: Get a single department by its ID
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DepartmentListResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Get department by ID
+      tags:
+      - Departments
+    patch:
+      consumes:
+      - application/json
+      description: Modify a department
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Department object with updated data
+        in: body
+        name: Department
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Department'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content - Department successfully updated
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Modify a department
+      tags:
+      - Departments
   /v1/units:
     get:
       consumes:

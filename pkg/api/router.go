@@ -68,6 +68,20 @@ func (r *Router) setupRoutes() {
 				unitsWithId.DELETE("/", r.handler.HandleDeleteUnit)
 			}
 		}
+	}
+	departments := v1.Group("/departments")
+	{
+		departments.GET("/", r.handler.HandleGetDepartmentList)
+		protectedDepartments := departments.Group("/", middleware.JwtAuth())
+		{
+			protectedDepartments.POST("/", r.handler.HandlePostDepartment)
+			withIdDepartments := protectedDepartments.Group("/:id", middleware.IDMiddleware())
+			{
+				withIdDepartments.GET("/", r.handler.HandleGetDepartment)
+				withIdDepartments.PATCH("/", r.handler.HandlePatchDepartment)
+				withIdDepartments.DELETE("/", r.handler.HandleDeleteDepartment)
 
+			}
+		}
 	}
 }
