@@ -35,6 +35,30 @@ definitions:
             type: string
         type: object
     type: object
+  dto.Manager:
+    properties:
+      name:
+        minLength: 3
+        type: string
+      phone:
+        maxLength: 11
+        minLength: 7
+        type: string
+    required:
+    - name
+    type: object
+  dto.ManagerListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Manager'
+        type: array
+    type: object
+  dto.ManagerResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.Manager'
+    type: object
   dto.SuccessAuthResponse:
     properties:
       token:
@@ -111,13 +135,10 @@ definitions:
     type: object
   models.Manager:
     properties:
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
       id:
         type: integer
       name:
+        maxLength: 100
         minLength: 3
         type: string
       phone:
@@ -489,6 +510,161 @@ paths:
       summary: Modify a department
       tags:
       - Departments
+  /v1/managers:
+    get:
+      consumes:
+      - application/json
+      description: Get list of managers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ManagerListResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get list of managers
+      tags:
+      - Managers
+    post:
+      consumes:
+      - application/json
+      description: Create a manager
+      parameters:
+      - description: Manager object with updated data
+        in: body
+        name: Manager
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Manager'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content - Manager successfully updated
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Create a manager
+      tags:
+      - Managers
+  /v1/managers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a manager
+      parameters:
+      - description: Manager ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Delete a manager
+      tags:
+      - Managers
+    get:
+      consumes:
+      - application/json
+      description: Get a single manager by its ID
+      parameters:
+      - description: Manager ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ManagerResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Get manager by ID
+      tags:
+      - Managers
+    patch:
+      consumes:
+      - application/json
+      description: Modify a Manager
+      parameters:
+      - description: Manager ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Manager object with updated data
+        in: body
+        name: Manager
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Manager'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content - Manager successfully updated
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Modify a Manager
+      tags:
+      - Managers
   /v1/units:
     get:
       consumes:

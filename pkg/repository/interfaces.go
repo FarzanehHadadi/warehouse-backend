@@ -32,6 +32,13 @@ type DepartmentRepository interface {
 	Update(departmentId uint, department *models.DepartmentUpdate) error
 	GetList() ([]models.Department, error)
 }
+type ManagerRepository interface {
+	Create(Manager *models.Manager) (*models.Manager, error)
+	FindByID(managerId uint) (*models.Manager, error)
+	Delete(managerId uint) error
+	Update(managerId uint, Manager *models.ManagerUpdate) error
+	GetList() ([]models.Manager, error)
+}
 
 // Repository holds all repositories
 type Repository struct {
@@ -39,4 +46,5 @@ type Repository struct {
 	Category   CategoryRepository
 	Unit       UnitRepository
 	Department DepartmentRepository
+	Manager    ManagerRepository
 }

@@ -84,4 +84,20 @@ func (r *Router) setupRoutes() {
 			}
 		}
 	}
+	managers := v1.Group("/managers")
+	{
+		managers.GET("/", r.handler.HandleGetManagerList)
+		protectedManagers := managers.Group("/", middleware.JwtAuth())
+		{
+			protectedManagers.POST("/", r.handler.HandlePostManager)
+			withIdManagers := protectedManagers.Group("/:id", middleware.IDMiddleware())
+			{
+				withIdManagers.GET("/", r.handler.HandleGetManager)
+				withIdManagers.PATCH("/", r.handler.HandlePatchManager)
+				withIdManagers.DELETE("/", r.handler.HandleDeleteManager)
+			}
+		}
+
+	}
+
 }
