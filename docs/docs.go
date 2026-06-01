@@ -804,10 +804,8 @@ const docTemplate = `{
         "dto.Department": {
             "type": "object",
             "properties": {
-                "manager_name": {
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 3
+                "manager_id": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string",
@@ -942,15 +940,42 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "manager_name": {
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 3
+                "manager": {
+                    "$ref": "#/definitions/models.Manager"
+                },
+                "manager_id": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string",
                     "maxLength": 100,
                     "minLength": 1
+                }
+            }
+        },
+        "models.Manager": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 3
+                },
+                "phone": {
+                    "type": "string",
+                    "maxLength": 11,
+                    "minLength": 7
                 }
             }
         },

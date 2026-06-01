@@ -94,7 +94,7 @@ func (h *Handler) HandlePostDepartment(c *gin.Context) {
 //	@Router			/v1/departments/{id} [patch]
 func (h *Handler) HandlePatchDepartment(c *gin.Context) {
 	id := GetIDFromContext(c)
-	var dep *models.Department
+	var dep *models.DepartmentUpdate
 	if err := c.ShouldBindBodyWithJSON(&dep); err != nil {
 		h.Response.BadRequestErr(c, err.Error())
 		return

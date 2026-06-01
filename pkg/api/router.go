@@ -27,7 +27,7 @@ func NewRouter(repo *repository.Repository) *Router {
 }
 
 func (r *Router) setupRoutes() {
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.PersistAuthorization(true)))
 	docs.SwaggerInfo.BasePath = "/"
 
 	v1 := r.Group("/v1")

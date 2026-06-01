@@ -29,7 +29,7 @@ type DepartmentRepository interface {
 	Create(department *models.Department) (*models.Department, error)
 	FindByID(departmentId uint) (*models.Department, error)
 	Delete(departmentId uint) error
-	Update(departmentId uint, department *models.Department) error
+	Update(departmentId uint, department *models.DepartmentUpdate) error
 	GetList() ([]models.Department, error)
 }
 

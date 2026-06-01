@@ -16,6 +16,13 @@ func NewDepartmentRepository(db *gorm.DB) DepartmentRepository {
 }
 
 func (dr *departmentRepository) Create(department *models.Department) (*models.Department, error) {
+	if department.ManagerID != nil {
+		var count int64
+		dr.db.Model(&models.Manager{}).Where("id = ?", *department.ManagerID).Count(&count)
+		if count == 0 {
+			return nil, ErrNotFound // or custom ErrManagerNotFound
+		}
+	}
 	result := dr.db.Create(&department)
 	if result.Error != nil {
 		if isDuplicateKeyError(result.Error) {
@@ -25,14 +32,14 @@ func (dr *departmentRepository) Create(department *models.Department) (*models.D
 			return nil, result.Error
 		}
 	}
-
+	dr.db.Preload("Manager").First(department, department.ID)
 	return department, nil
 
 }
 
 func (dr *departmentRepository) FindByID(departmentId uint) (*models.Department, error) {
 	var department *models.Department
-	result := dr.db.First(&department, departmentId)
+	result := dr.db.Preload("Manager").First(&department, departmentId)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -49,7 +56,8 @@ func (dr *departmentRepository) Delete(departmentId uint) error {
 	}
 	return nil
 }
-func (dr *departmentRepository) Update(departmentId uint, department *models.Department) error {
+func (dr *departmentRepository) Update(departmentId uint, department *models.DepartmentUpdate) error {
+	// Prevent changing ID
 	result := dr.db.Model(&models.Department{}).Where("id = ?", departmentId).Updates(department)
 
 	if result.Error != nil {
@@ -65,7 +73,7 @@ func (dr *departmentRepository) GetList() ([]models.Department, error) {
 	defer cancelFunc()
 
 	var departments []models.Department
-	result := dr.db.WithContext(ctx).Find(&departments)
+	result := dr.db.WithContext(ctx).Preload("Manager").Find(&departments)
 	if result.Error != nil {
 		return nil, result.Error
 	}
