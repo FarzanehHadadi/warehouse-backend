@@ -629,13 +629,16 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.Manager"
+                            "$ref": "#/definitions/dto.CreateManagerRequest"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "No Content - Manager successfully updated"
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ManagerDetailResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -692,7 +695,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ManagerResponse"
+                            "$ref": "#/definitions/dto.ManagerDetailResponse"
                         }
                     },
                     "404": {
@@ -790,7 +793,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.Manager"
+                            "$ref": "#/definitions/dto.CreateManagerRequest"
                         }
                     }
                 ],
@@ -1051,6 +1054,23 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CreateManagerRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "phone"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "+1234567890"
+                }
+            }
+        },
         "dto.Department": {
             "type": "object",
             "properties": {
@@ -1075,6 +1095,21 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.DepartmentSummary": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "Department ID",
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "description": "Department name",
+                    "type": "string",
+                    "example": "Engineering"
+                }
+            }
+        },
         "dto.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -1091,39 +1126,64 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.Manager": {
+        "dto.ManagerDetailResponse": {
             "type": "object",
-            "required": [
-                "name"
-            ],
             "properties": {
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.DepartmentSummary"
+                    }
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
                 "name": {
                     "type": "string",
-                    "minLength": 3
+                    "example": "John Doe"
                 },
                 "phone": {
                     "type": "string",
-                    "maxLength": 11,
-                    "minLength": 7
+                    "example": "+1234567890"
                 }
             }
         },
         "dto.ManagerListResponse": {
             "type": "object",
             "properties": {
-                "data": {
+                "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Manager"
+                        "$ref": "#/definitions/dto.ManagerSummary"
                     }
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 10
                 }
             }
         },
-        "dto.ManagerResponse": {
+        "dto.ManagerSummary": {
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.Manager"
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.DepartmentSummary"
+                    }
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "+1234567890"
                 }
             }
         },
@@ -1245,6 +1305,12 @@ const docTemplate = `{
                 "name"
             ],
             "properties": {
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
                 "id": {
                     "type": "integer"
                 },

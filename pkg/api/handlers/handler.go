@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"warehouse/pkg/api/appresponse"
 	"warehouse/pkg/repository"
 
@@ -23,4 +24,13 @@ func GetIDFromContext(c *gin.Context) uint {
 		return id.(uint)
 	}
 	return 0
+}
+
+// Helper functions
+func (h *Handler) handleManagerError(c *gin.Context, err error, title string) {
+	if errors.Is(err, repository.ErrNotFound) {
+		h.Response.NotFoundErr(c, title)
+		return
+	}
+	h.Response.InternalServerErr(c, err.Error())
 }

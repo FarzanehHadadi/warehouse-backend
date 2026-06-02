@@ -37,7 +37,7 @@ type ManagerRepository interface {
 	FindByID(managerId uint) (*models.Manager, error)
 	Delete(managerId uint) error
 	Update(managerId uint, Manager *models.ManagerUpdate) error
-	GetList() ([]models.Manager, error)
+	GetList() ([]*models.Manager, int64, error)
 }
 
 // Repository holds all repositories

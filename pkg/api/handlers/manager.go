@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"errors"
+	"warehouse/pkg/api/dto"
+	"warehouse/pkg/api/mapper"
 	"warehouse/pkg/models"
 	"warehouse/pkg/repository"
 
@@ -18,24 +20,19 @@ import (
 //	 @Security     Bearer
 //	@Produce		json
 //	@Param			id	path		int	true	"Manager ID"
-//	@Success		200	{object}	dto.ManagerResponse
+//	@Success		200	{object}	dto.ManagerDetailResponse
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/managers/{id} [get]
 func (h *Handler) HandleGetManager(c *gin.Context) {
 	id := GetIDFromContext(c)
+
 	manager, err := h.Repository.Manager.FindByID(id)
 	if err != nil {
-		if errors.Is(err, repository.ErrNotFound) {
-			h.Response.NotFoundErr(c, "Manager")
-
-		} else {
-			h.Response.InternalServerErr(c, err.Error())
-		}
+		h.handleManagerError(c, err, "Manager")
 		return
-
 	}
 
-	h.Response.SuccessResponse(c, manager)
+	h.Response.SuccessResponse(c, mapper.ToManagerDetailResponse(manager))
 }
 
 // HandlePostManager godoc
@@ -47,8 +44,8 @@ func (h *Handler) HandleGetManager(c *gin.Context) {
 //	@Produce		json
 //	 @Security     ApiKeyAuth
 //	 @Security     Bearer
-//	@Param			Manager	body		dto.Manager	true	"Manager object with updated data"
-//	@Success		200			"No Content - Manager successfully updated"
+//	@Param			Manager	body		dto.CreateManagerRequest	true	"Manager object with updated data"
+//	@Success		204			{object}	dto.ManagerDetailResponse
 //	@Failure		400			{object}	dto.ErrorResponse
 //	@Failure		404			{object}	dto.ErrorResponse
 //	@Failure		500			{object}	dto.ErrorResponse
@@ -86,7 +83,7 @@ func (h *Handler) HandlePostManager(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id			path		int				true	"Manager ID"
-//	@Param			Manager	body		dto.Manager	true	"Manager object with updated data"
+//	@Param			Manager	body		dto.CreateManagerRequest	true	"Manager object with updated data"
 //	@Success		200			"No Content - Manager successfully updated"
 //	@Failure		400			{object}	dto.ErrorResponse
 //	@Failure		404			{object}	dto.ErrorResponse
@@ -158,16 +155,15 @@ func (h *Handler) HandleDeleteManager(c *gin.Context) {
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/managers [get]
 func (h *Handler) HandleGetManagerList(c *gin.Context) {
-	depList, err := h.Repository.Manager.GetList()
+	managers, total, err := h.Repository.Manager.GetList()
 	if err != nil {
-		switch err {
-		case repository.ErrNotFound:
-			h.Response.NotFoundErr(c, "Manager")
-		default:
-			h.Response.InternalServerErr(c, err.Error())
-
-		}
+		h.handleManagerError(c, err, "Manager")
 		return
 	}
-	h.Response.SuccessResponse(c, depList)
+	response := &dto.ManagerListResponse{
+		Items: mapper.ToManagerSummaries(managers),
+		Total: total,
+	}
+
+	h.Response.SuccessResponse(c, response)
 }

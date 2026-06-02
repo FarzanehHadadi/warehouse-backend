@@ -33,7 +33,7 @@ func (mr *managerRepository) Create(manager *models.Manager) (*models.Manager, e
 }
 func (mr *managerRepository) FindByID(managerId uint) (*models.Manager, error) {
 	var manager *models.Manager
-	err := mr.db.First(&manager, managerId).Error
+	err := mr.db.Preload("Departments").First(&manager, managerId).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrNotFound
@@ -63,16 +63,16 @@ func (mr *managerRepository) Update(managerId uint, manager *models.ManagerUpdat
 	return nil
 }
 
-func (mr *managerRepository) GetList() ([]models.Manager, error) {
+func (mr *managerRepository) GetList() ([]*models.Manager, int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), databaseTimeout)
 	defer cancel()
 
-	var managers []models.Manager
-	result := mr.db.WithContext(ctx).Find(&managers)
-
+	var managers []*models.Manager
+	result := mr.db.WithContext(ctx).Preload("Departments").Find(&managers)
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, 0, result.Error
 	}
+	total := result.RowsAffected
 
-	return managers, nil
+	return managers, total, nil
 }

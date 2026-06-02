@@ -9,6 +9,18 @@ definitions:
     required:
     - name
     type: object
+  dto.CreateManagerRequest:
+    properties:
+      name:
+        example: John Doe
+        type: string
+      phone:
+        example: "+1234567890"
+        type: string
+    required:
+    - name
+    - phone
+    type: object
   dto.Department:
     properties:
       manager_id:
@@ -25,6 +37,17 @@ definitions:
           $ref: '#/definitions/models.Department'
         type: array
     type: object
+  dto.DepartmentSummary:
+    properties:
+      id:
+        description: Department ID
+        example: 1
+        type: integer
+      name:
+        description: Department name
+        example: Engineering
+        type: string
+    type: object
   dto.ErrorResponse:
     properties:
       error:
@@ -35,29 +58,47 @@ definitions:
             type: string
         type: object
     type: object
-  dto.Manager:
+  dto.ManagerDetailResponse:
     properties:
+      departments:
+        items:
+          $ref: '#/definitions/dto.DepartmentSummary'
+        type: array
+      id:
+        example: 1
+        type: integer
       name:
-        minLength: 3
+        example: John Doe
         type: string
       phone:
-        maxLength: 11
-        minLength: 7
+        example: "+1234567890"
         type: string
-    required:
-    - name
     type: object
   dto.ManagerListResponse:
     properties:
-      data:
+      items:
         items:
-          $ref: '#/definitions/models.Manager'
+          $ref: '#/definitions/dto.ManagerSummary'
         type: array
+      total:
+        example: 10
+        type: integer
     type: object
-  dto.ManagerResponse:
+  dto.ManagerSummary:
     properties:
-      data:
-        $ref: '#/definitions/models.Manager'
+      departments:
+        items:
+          $ref: '#/definitions/dto.DepartmentSummary'
+        type: array
+      id:
+        example: 1
+        type: integer
+      name:
+        example: John Doe
+        type: string
+      phone:
+        example: "+1234567890"
+        type: string
     type: object
   dto.SuccessAuthResponse:
     properties:
@@ -135,6 +176,10 @@ definitions:
     type: object
   models.Manager:
     properties:
+      departments:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
       id:
         type: integer
       name:
@@ -541,12 +586,14 @@ paths:
         name: Manager
         required: true
         schema:
-          $ref: '#/definitions/dto.Manager'
+          $ref: '#/definitions/dto.CreateManagerRequest'
       produces:
       - application/json
       responses:
-        "200":
-          description: No Content - Manager successfully updated
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/dto.ManagerDetailResponse'
         "400":
           description: Bad Request
           schema:
@@ -615,7 +662,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ManagerResponse'
+            $ref: '#/definitions/dto.ManagerDetailResponse'
         "404":
           description: Not Found
           schema:
@@ -641,7 +688,7 @@ paths:
         name: Manager
         required: true
         schema:
-          $ref: '#/definitions/dto.Manager'
+          $ref: '#/definitions/dto.CreateManagerRequest'
       produces:
       - application/json
       responses:
