@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"errors"
 	"warehouse/pkg/api/dto"
 	"warehouse/pkg/api/mapper"
 	"warehouse/pkg/models"
-	"warehouse/pkg/repository"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +18,7 @@ import (
 //	 @Security     Bearer
 //	@Produce		json
 //	@Param			id	path		int	true	"Manager ID"
-//	@Success		200	{object}	dto.ManagerDetailResponse
+//	@Success		200	{object}	dto.ManagerSummary
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/managers/{id} [get]
 func (h *Handler) HandleGetManager(c *gin.Context) {
@@ -28,7 +26,7 @@ func (h *Handler) HandleGetManager(c *gin.Context) {
 
 	manager, err := h.Repository.Manager.FindByID(id)
 	if err != nil {
-		h.handleManagerError(c, err, "Manager")
+		h.handleError(c, err, "Manager")
 		return
 	}
 
@@ -45,7 +43,7 @@ func (h *Handler) HandleGetManager(c *gin.Context) {
 //	 @Security     ApiKeyAuth
 //	 @Security     Bearer
 //	@Param			Manager	body		dto.CreateManagerRequest	true	"Manager object with updated data"
-//	@Success		204			{object}	dto.ManagerDetailResponse
+//	@Success		204			{object}	dto.ManagerSummary
 //	@Failure		400			{object}	dto.ErrorResponse
 //	@Failure		404			{object}	dto.ErrorResponse
 //	@Failure		500			{object}	dto.ErrorResponse
@@ -60,12 +58,8 @@ func (h *Handler) HandlePostManager(c *gin.Context) {
 
 	dep, err := h.Repository.Manager.Create(manager)
 	if err != nil {
-		if errors.Is(err, repository.ErrDuplicateKey) {
-			h.Response.ConflictErr(c, err.Error())
-		} else {
-			h.Response.InternalServerErr(c, err.Error())
+		h.handleError(c, err, "Manager")
 
-		}
 		return
 	}
 	h.Response.CreatedResponse(c, dep)
@@ -97,13 +91,7 @@ func (h *Handler) HandlePatchManager(c *gin.Context) {
 		return
 	}
 	if err := h.Repository.Manager.Update(id, dep); err != nil {
-		switch err {
-		case repository.ErrNotFound:
-			h.Response.NotFoundErr(c, "Manager")
-		default:
-			h.Response.InternalServerErr(c, err.Error())
-
-		}
+		h.handleError(c, err, "Manager")
 		return
 	}
 	h.Response.NoContentResponse(c)
@@ -130,13 +118,7 @@ func (h *Handler) HandlePatchManager(c *gin.Context) {
 func (h *Handler) HandleDeleteManager(c *gin.Context) {
 	id := GetIDFromContext(c)
 	if err := h.Repository.Manager.Delete(id); err != nil {
-		switch err {
-		case repository.ErrNotFound:
-			h.Response.NotFoundErr(c, "Manager")
-		default:
-			h.Response.InternalServerErr(c, err.Error())
-
-		}
+		h.handleError(c, err, "Manager")
 		return
 	}
 	h.Response.NoContentResponse(c)
@@ -157,7 +139,7 @@ func (h *Handler) HandleDeleteManager(c *gin.Context) {
 func (h *Handler) HandleGetManagerList(c *gin.Context) {
 	managers, total, err := h.Repository.Manager.GetList()
 	if err != nil {
-		h.handleManagerError(c, err, "Manager")
+		h.handleError(c, err, "Manager")
 		return
 	}
 	response := &dto.ManagerListResponse{

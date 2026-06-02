@@ -13,9 +13,13 @@ definitions:
     properties:
       name:
         example: John Doe
+        maxLength: 100
+        minLength: 3
         type: string
       phone:
         example: "+1234567890"
+        maxLength: 11
+        minLength: 7
         type: string
     required:
     - name
@@ -57,22 +61,6 @@ definitions:
           message:
             type: string
         type: object
-    type: object
-  dto.ManagerDetailResponse:
-    properties:
-      departments:
-        items:
-          $ref: '#/definitions/dto.DepartmentSummary'
-        type: array
-      id:
-        example: 1
-        type: integer
-      name:
-        example: John Doe
-        type: string
-      phone:
-        example: "+1234567890"
-        type: string
     type: object
   dto.ManagerListResponse:
     properties:
@@ -192,6 +180,7 @@ definitions:
         type: string
     required:
     - name
+    - phone
     type: object
   models.Unit:
     properties:
@@ -593,7 +582,7 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/dto.ManagerDetailResponse'
+            $ref: '#/definitions/dto.ManagerSummary'
         "400":
           description: Bad Request
           schema:
@@ -662,7 +651,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ManagerDetailResponse'
+            $ref: '#/definitions/dto.ManagerSummary'
         "404":
           description: Not Found
           schema:

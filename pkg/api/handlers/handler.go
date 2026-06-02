@@ -27,10 +27,13 @@ func GetIDFromContext(c *gin.Context) uint {
 }
 
 // Helper functions
-func (h *Handler) handleManagerError(c *gin.Context, err error, title string) {
-	if errors.Is(err, repository.ErrNotFound) {
-		h.Response.NotFoundErr(c, title)
-		return
+func (h *Handler) handleError(c *gin.Context, err error, resourceName string) {
+	switch {
+	case errors.Is(err, repository.ErrNotFound):
+		h.Response.NotFoundErr(c, resourceName)
+	case errors.Is(err, repository.ErrDuplicateKey):
+		h.Response.ConflictErr(c, err.Error())
+	default:
+		h.Response.InternalServerErr(c, err.Error())
 	}
-	h.Response.InternalServerErr(c, err.Error())
 }

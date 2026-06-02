@@ -637,7 +637,7 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/dto.ManagerDetailResponse"
+                            "$ref": "#/definitions/dto.ManagerSummary"
                         }
                     },
                     "400": {
@@ -695,7 +695,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ManagerDetailResponse"
+                            "$ref": "#/definitions/dto.ManagerSummary"
                         }
                     },
                     "404": {
@@ -1063,10 +1063,14 @@ const docTemplate = `{
             "properties": {
                 "name": {
                     "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3,
                     "example": "John Doe"
                 },
                 "phone": {
                     "type": "string",
+                    "maxLength": 11,
+                    "minLength": 7,
                     "example": "+1234567890"
                 }
             }
@@ -1123,29 +1127,6 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
-                }
-            }
-        },
-        "dto.ManagerDetailResponse": {
-            "type": "object",
-            "properties": {
-                "departments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.DepartmentSummary"
-                    }
-                },
-                "id": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "name": {
-                    "type": "string",
-                    "example": "John Doe"
-                },
-                "phone": {
-                    "type": "string",
-                    "example": "+1234567890"
                 }
             }
         },
@@ -1302,7 +1283,8 @@ const docTemplate = `{
         "models.Manager": {
             "type": "object",
             "required": [
-                "name"
+                "name",
+                "phone"
             ],
             "properties": {
                 "departments": {
