@@ -31,7 +31,7 @@ func (ur *unitRepository) Create(unit *models.Unit) (*models.Unit, error) {
 
 func (ur *unitRepository) FindByID(unitId uint) (*models.Unit, error) {
 	var unit *models.Unit
-	result := ur.db.Where(&models.Unit{Id: unitId}).First(&unit)
+	result := ur.db.Where("id = ?", unitId).First(&unit)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -50,7 +50,7 @@ func (ur *unitRepository) Delete(unitId uint) error {
 
 }
 func (ur *unitRepository) Update(unitId uint, unit *models.Unit) error {
-	result := ur.db.Model(&models.Unit{}).Where(&models.Unit{Id: unitId}).Updates(unit)
+	result := ur.db.Model(&models.Unit{}).Where("id = ?", unitId).Updates(unit)
 	if result.Error != nil {
 		return result.Error
 	}

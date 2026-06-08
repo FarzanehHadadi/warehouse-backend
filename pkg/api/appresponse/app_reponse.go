@@ -3,6 +3,7 @@ package appresponse
 import (
 	"net/http"
 	"warehouse/pkg/api/apperr"
+	"warehouse/pkg/api/filter"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,9 +17,27 @@ func NewResponse() *Response {
 func (r *Response) SuccessResponse(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusOK, gin.H{"data": data})
 }
+type PaginatedList[T any] struct {
+	Items      []T    `json:"items"`
+	NextCursor string `json:"next_cursor"`
+	HasMore    bool   `json:"has_more"`
+	Limit      int    `json:"limit"`
+}
+
+func NewPaginatedList[T any](items []T, cursor filter.CursorResponse, limit int) PaginatedList[T] {
+	return PaginatedList[T]{
+		Items:      items,
+		NextCursor: cursor.NextCursor,
+		HasMore:    cursor.HasMore,
+		Limit:      limit,
+	}
+}
+
+func (r *Response) ListSuccessResponse(c *gin.Context, data any) {
+	c.JSON(http.StatusOK, gin.H{"data": data})
+}
 
 func (r *Response) CreatedResponse(c *gin.Context, data interface{}) {
-	c.JSON(http.StatusCreated, gin.H{"data": data})
 }
 
 func (r *Response) NoContentResponse(c *gin.Context) {

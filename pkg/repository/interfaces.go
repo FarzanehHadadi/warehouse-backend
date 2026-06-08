@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"warehouse/pkg/api/filter"
 	"warehouse/pkg/models"
 )
 
@@ -37,7 +38,7 @@ type ManagerRepository interface {
 	FindByID(managerId uint) (*models.Manager, error)
 	Delete(managerId uint) error
 	Update(managerId uint, Manager *models.ManagerUpdate) error
-	GetList() ([]*models.Manager, int64, error)
+	GetList(req filter.Request) ([]*models.Manager, *filter.CursorResponse, error)
 }
 
 // Repository holds all repositories

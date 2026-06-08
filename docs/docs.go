@@ -576,7 +576,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get list of managers",
+                "description": "Retrieve managers with filtering, search, and cursor pagination",
                 "consumes": [
                     "application/json"
                 ],
@@ -586,7 +586,62 @@ const docTemplate = `{
                 "tags": [
                     "Managers"
                 ],
-                "summary": "Get list of managers",
+                "summary": "Get Managers List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Global search in name, phone, email",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by name (partial match)",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created after date (YYYY-MM-DD)",
+                        "name": "created_at_gt",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "id",
+                            "name",
+                            "created_at"
+                        ],
+                        "type": "string",
+                        "description": "Sort field",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort direction",
+                        "name": "sort_order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cursor for next page",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Number of items per page (max 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -594,8 +649,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.ManagerListResponse"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorResponse"
                         }
@@ -1133,15 +1188,23 @@ const docTemplate = `{
         "dto.ManagerListResponse": {
             "type": "object",
             "properties": {
+                "has_more": {
+                    "type": "boolean",
+                    "example": true
+                },
                 "items": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.ManagerSummary"
                     }
                 },
-                "total": {
+                "limit": {
                     "type": "integer",
-                    "example": 10
+                    "example": 20
+                },
+                "next_cursor": {
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
@@ -1249,12 +1312,18 @@ const docTemplate = `{
                 "name"
             ],
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string",
                     "minLength": 3
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -1264,6 +1333,9 @@ const docTemplate = `{
                 "name"
             ],
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -1277,6 +1349,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 100,
                     "minLength": 1
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -1287,6 +1362,9 @@ const docTemplate = `{
                 "phone"
             ],
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "departments": {
                     "type": "array",
                     "items": {
@@ -1305,6 +1383,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 11,
                     "minLength": 7
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -1314,12 +1395,18 @@ const docTemplate = `{
                 "name"
             ],
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string",
                     "minLength": 1
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         }

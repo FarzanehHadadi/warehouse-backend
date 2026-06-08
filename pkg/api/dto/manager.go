@@ -13,10 +13,10 @@ type ManagerSummary struct {
 
 // ManagerListResponse represents a paginated list of managers
 type ManagerListResponse struct {
-	Items []ManagerSummary `json:"items"`
-	Total int64            `json:"total" example:"10"`
-	// Page  int              `json:"page" example:"1"`
-	// Limit int              `json:"limit" example:"20"`
+	Data       []ManagerSummary `json:"items"`
+	NextCursor string           `json:"next_cursor" example:""`
+	HasMore    bool             `json:"has_more" example:"true"`
+	Limit      int              `json:"limit" example:"20"`
 }
 
 // CreateManagerRequest represents request body for creating a manager

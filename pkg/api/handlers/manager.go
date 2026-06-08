@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"warehouse/pkg/api/appresponse"
 	"warehouse/pkg/api/dto"
 	"warehouse/pkg/api/mapper"
 	"warehouse/pkg/models"
@@ -125,27 +126,32 @@ func (h *Handler) HandleDeleteManager(c *gin.Context) {
 
 }
 
-// HandleGetManagerList godoc
-//
-//	@Summary		Get list of managers
-//	@Description	Get list of managers
-//	@Tags			Managers
-//	 @Security     ApiKeyAuth
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	dto.ManagerListResponse
-//	@Failure		404	{object}	dto.ErrorResponse
-//	@Router			/v1/managers [get]
+// @Summary      Get Managers List
+// @Description  Retrieve managers with filtering, search, and cursor pagination
+// @Tags         Managers
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        search          query    string    false  "Global search in name, phone, email"
+// @Param        name            query    string    false  "Filter by name (partial match)"
+// @Param        created_at_gt   query    string    false  "Created after date (YYYY-MM-DD)"
+// @Param        sort_by         query    string    false  "Sort field" Enums(id,name,created_at)
+// @Param        sort_order      query    string    false  "Sort direction" Enums(asc,desc)
+// @Param        cursor          query    string    false  "Cursor for next page"
+// @Param        limit           query    integer   false  "Number of items per page (max 100)" minimum(1) maximum(100)
+// @Success      200  {object}  dto.ManagerListResponse
+// @Failure      400  {object}  dto.ErrorResponse
+// @Router       /v1/managers [get]
 func (h *Handler) HandleGetManagerList(c *gin.Context) {
-	managers, total, err := h.Repository.Manager.GetList()
+	req := dto.NewPaginationRequest(c)
+	managers, cursorResp, err := h.Repository.Manager.GetList(*req)
 	if err != nil {
-		h.handleError(c, err, "Manager")
+		h.Response.InternalServerErr(c, err.Error())
 		return
 	}
-	response := &dto.ManagerListResponse{
-		Items: mapper.ToManagerSummaries(managers),
-		Total: total,
-	}
-
-	h.Response.SuccessResponse(c, response)
+	h.Response.ListSuccessResponse(c, appresponse.NewPaginatedList(
+		mapper.ToManagerSummaries(managers),
+		*cursorResp,
+		req.Limit,
+	))
 }

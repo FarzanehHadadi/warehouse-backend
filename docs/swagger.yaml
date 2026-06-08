@@ -64,13 +64,19 @@ definitions:
     type: object
   dto.ManagerListResponse:
     properties:
+      has_more:
+        example: true
+        type: boolean
       items:
         items:
           $ref: '#/definitions/dto.ManagerSummary'
         type: array
-      total:
-        example: 10
+      limit:
+        example: 20
         type: integer
+      next_cursor:
+        example: ""
+        type: string
     type: object
   dto.ManagerSummary:
     properties:
@@ -139,16 +145,22 @@ definitions:
     type: object
   models.Category:
     properties:
+      created_at:
+        type: string
       id:
         type: integer
       name:
         minLength: 3
+        type: string
+      updated_at:
         type: string
     required:
     - name
     type: object
   models.Department:
     properties:
+      created_at:
+        type: string
       id:
         type: integer
       manager:
@@ -159,11 +171,15 @@ definitions:
         maxLength: 100
         minLength: 1
         type: string
+      updated_at:
+        type: string
     required:
     - name
     type: object
   models.Manager:
     properties:
+      created_at:
+        type: string
       departments:
         items:
           $ref: '#/definitions/models.Department'
@@ -178,16 +194,22 @@ definitions:
         maxLength: 11
         minLength: 7
         type: string
+      updated_at:
+        type: string
     required:
     - name
     - phone
     type: object
   models.Unit:
     properties:
+      created_at:
+        type: string
       id:
         type: integer
       name:
         minLength: 1
+        type: string
+      updated_at:
         type: string
     required:
     - name
@@ -548,7 +570,45 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get list of managers
+      description: Retrieve managers with filtering, search, and cursor pagination
+      parameters:
+      - description: Global search in name, phone, email
+        in: query
+        name: search
+        type: string
+      - description: Filter by name (partial match)
+        in: query
+        name: name
+        type: string
+      - description: Created after date (YYYY-MM-DD)
+        in: query
+        name: created_at_gt
+        type: string
+      - description: Sort field
+        enum:
+        - id
+        - name
+        - created_at
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      - description: Cursor for next page
+        in: query
+        name: cursor
+        type: string
+      - description: Number of items per page (max 100)
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -556,13 +616,13 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.ManagerListResponse'
-        "404":
-          description: Not Found
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
       security:
       - ApiKeyAuth: []
-      summary: Get list of managers
+      summary: Get Managers List
       tags:
       - Managers
     post:

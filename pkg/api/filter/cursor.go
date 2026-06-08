@@ -13,7 +13,7 @@ type CursorData struct {
 }
 
 func EncodeCursor(id uint, createdAt time.Time) string {
-	data := fmt.Sprintf("%d|%s", id, createdAt)
+	data := fmt.Sprintf("%d|%s", id, createdAt.Format(time.RFC3339Nano))
 	return base64.RawStdEncoding.EncodeToString([]byte(data))
 
 }
@@ -28,6 +28,7 @@ func DecodeCursor(cursor string) (*CursorData, error) {
 		return nil, err
 	}
 	parts := strings.Split(string(decoded), "|")
+
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("Invalid cursor data")
 	}
