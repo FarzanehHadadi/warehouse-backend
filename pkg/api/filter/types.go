@@ -2,7 +2,6 @@ package filter
 
 type Operator string
 
-// define operators type
 const (
 	Eq   Operator = "eq"
 	Ne   Operator = "ne"
@@ -14,7 +13,6 @@ const (
 	In   Operator = "in"
 )
 
-// define type string,uint,time
 type FieldType string
 
 const (
@@ -24,7 +22,6 @@ const (
 	BooleanType FieldType = "boolean"
 )
 
-// define condition
 type Condition struct {
 	Field    string   `json:"field"`
 	Operator Operator `json:"operator"`
@@ -40,10 +37,25 @@ type Request struct {
 	Limit   int         `json:"limit"`
 }
 
+type FieldFilterConfig struct {
+	QueryParam string    // URL query key, e.g. "name", "created_after", "status"
+	Field      string    // DB column used in WHERE
+	Type       FieldType // string | uint | time | boolean
+	Operator   Operator  // eq | ne | gt | gte | lt | lte | like | in
+}
+
 type Config struct {
-	Fields         map[string]FieldType
+	Filters        []FieldFilterConfig
 	SearchFields   []string
 	SortableFields map[string]bool
+}
+
+func (cfg Config) FieldTypes() map[string]FieldType {
+	types := make(map[string]FieldType, len(cfg.Filters))
+	for _, f := range cfg.Filters {
+		types[f.Field] = f.Type
+	}
+	return types
 }
 
 type CursorResponse struct {

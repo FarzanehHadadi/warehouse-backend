@@ -580,9 +580,21 @@ paths:
         in: query
         name: name
         type: string
+      - description: Filter by phone (partial match)
+        in: query
+        name: phone
+        type: string
       - description: Created after date (YYYY-MM-DD)
         in: query
-        name: created_at_gt
+        name: created_after
+        type: string
+      - description: Created before date (YYYY-MM-DD)
+        in: query
+        name: created_from
+        type: string
+      - description: Status field
+        in: query
+        name: status
         type: string
       - description: Sort field
         enum:

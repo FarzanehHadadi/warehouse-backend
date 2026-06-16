@@ -9,8 +9,10 @@ import (
 )
 
 func Apply(query *gorm.DB, req Request, cfg Config) (*gorm.DB, error) {
+	allowedFields := cfg.FieldTypes()
+
 	for _, cond := range req.Filters {
-		fieldType, ok := cfg.Fields[cond.Field]
+		fieldType, ok := allowedFields[cond.Field]
 		if !ok {
 			return nil, fmt.Errorf("field %s not allowed", cond.Field)
 		}
@@ -22,6 +24,8 @@ func Apply(query *gorm.DB, req Request, cfg Config) (*gorm.DB, error) {
 			query = applyString(query, cond)
 		case TimeType:
 			query = applyTime(query, cond)
+		case BooleanType:
+			query = applyBoolean(query, cond)
 		}
 	}
 
@@ -120,6 +124,8 @@ func applyBoolean(query *gorm.DB, cond Condition) *gorm.DB {
 	}
 
 	switch cond.Operator {
+	case In:
+		return query.Where(cond.Field+" IN ?", cond.Values)
 	case Eq:
 		return query.Where(cond.Field+" = ?", cond.Values[0])
 	}

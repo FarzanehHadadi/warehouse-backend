@@ -602,8 +602,26 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Filter by phone (partial match)",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Created after date (YYYY-MM-DD)",
-                        "name": "created_at_gt",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created before date (YYYY-MM-DD)",
+                        "name": "created_from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status field",
+                        "name": "status",
                         "in": "query"
                     },
                     {

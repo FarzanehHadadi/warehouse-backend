@@ -9,6 +9,7 @@ import (
 	"warehouse/pkg/api"
 	"warehouse/pkg/api/auth"
 	"warehouse/pkg/database"
+	"warehouse/pkg/logger"
 	"warehouse/pkg/repository"
 
 	"github.com/joho/godotenv"
@@ -31,6 +32,8 @@ import (
 // @name Authorization
 // @description Enter JWT with Bearer prefix
 func main() {
+	logger.Init()
+	defer logger.Sync()
 	// env
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using system environment variables")
