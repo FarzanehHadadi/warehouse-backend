@@ -12,3 +12,7 @@ type SuccessUnitResponse struct {
 type SuccessUnitListResponse struct {
 	Data []models.Unit `json:"data"`
 }
+type Summary struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+}

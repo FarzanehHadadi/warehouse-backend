@@ -94,6 +94,28 @@ definitions:
         example: "+1234567890"
         type: string
     type: object
+  dto.ProductSummary:
+    properties:
+      category:
+        $ref: '#/definitions/dto.Summary'
+      category_id:
+        example: 2
+        type: integer
+      id:
+        example: 1
+        type: integer
+      name:
+        example: product1
+        type: string
+      unit:
+        $ref: '#/definitions/dto.Summary'
+      unit_id:
+        example: 3
+        type: integer
+      warning_threshold:
+        example: 1
+        type: integer
+    type: object
   dto.SuccessAuthResponse:
     properties:
       token:
@@ -123,6 +145,13 @@ definitions:
       data:
         $ref: '#/definitions/models.Unit'
     type: object
+  dto.Summary:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   dto.Unit:
     properties:
       name:
@@ -142,6 +171,22 @@ definitions:
     required:
     - mobile
     - password
+    type: object
+  dto.productListResponse:
+    properties:
+      has_more:
+        example: true
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/dto.ProductSummary'
+        type: array
+      limit:
+        example: 20
+        type: integer
+      next_cursor:
+        example: ""
+        type: string
     type: object
   models.Category:
     properties:
@@ -199,6 +244,25 @@ definitions:
     required:
     - name
     - phone
+    type: object
+  models.ProductUpdate:
+    properties:
+      category_id:
+        type: integer
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      unit_id:
+        type: integer
+      warning_threshold:
+        minimum: 1
+        type: integer
+    required:
+    - category_id
+    - name
+    - unit_id
+    - warning_threshold
     type: object
   models.Unit:
     properties:
@@ -592,10 +656,6 @@ paths:
         in: query
         name: created_from
         type: string
-      - description: Status field
-        in: query
-        name: status
-        type: string
       - description: Sort field
         enum:
         - id
@@ -773,6 +833,201 @@ paths:
       summary: Modify a Manager
       tags:
       - Managers
+  /v1/products:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve products with filtering, search, and cursor pagination
+      parameters:
+      - description: Filter by name (partial match)
+        in: query
+        name: name
+        type: string
+      - description: Created after date (YYYY-MM-DD)
+        in: query
+        name: created_after
+        type: string
+      - description: Created before date (YYYY-MM-DD)
+        in: query
+        name: created_from
+        type: string
+      - description: Sort field
+        enum:
+        - id
+        - name
+        - created_at
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      - description: Cursor for next page
+        in: query
+        name: cursor
+        type: string
+      - description: Number of items per page (max 100)
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.productListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get products List
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Create a product
+      parameters:
+      - description: product object with updated data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductUpdate'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/dto.ProductSummary'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Create a product
+      tags:
+      - Products
+  /v1/products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a product
+      parameters:
+      - description: product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Delete a product
+      tags:
+      - Products
+    get:
+      consumes:
+      - application/json
+      description: Get a single product by its ID
+      parameters:
+      - description: product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductSummary'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Get product by ID
+      tags:
+      - Products
+    patch:
+      consumes:
+      - application/json
+      description: Modify a product
+      parameters:
+      - description: product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: product object with updated data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content - product successfully updated
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Modify a product
+      tags:
+      - Products
   /v1/units:
     get:
       consumes:

@@ -40,6 +40,13 @@ type ManagerRepository interface {
 	Update(managerId uint, Manager *models.ManagerUpdate) error
 	GetList(req filter.Request) ([]*models.Manager, *filter.CursorResponse, error)
 }
+type ProductRepository interface {
+	Create(product *models.Product) (*models.Product, error)
+	FindByID(productId uint) (*models.Product, error)
+	Delete(productId uint) error
+	Update(productId uint, product *models.ProductUpdate) error
+	GetList(req filter.Request) ([]*models.Product, *filter.CursorResponse, error)
+}
 
 // Repository holds all repositories
 type Repository struct {
@@ -48,4 +55,5 @@ type Repository struct {
 	Unit       UnitRepository
 	Department DepartmentRepository
 	Manager    ManagerRepository
+	Product    ProductRepository
 }

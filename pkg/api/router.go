@@ -99,5 +99,20 @@ func (r *Router) setupRoutes() {
 		}
 
 	}
+	products := v1.Group("/products")
+	{
+		products.GET("/", r.handler.HandleGetProductList)
+		protectedProducts := products.Group("/", middleware.JwtAuth())
+		{
+			protectedProducts.POST("/", r.handler.HandlePostProduct)
+			withIdProducts := protectedProducts.Group("/:id", middleware.IDMiddleware())
+			{
+				withIdProducts.GET("/", r.handler.HandleGetProduct)
+				withIdProducts.PATCH("/", r.handler.HandlePatchProduct)
+				withIdProducts.DELETE("/", r.handler.HandleDeleteProduct)
+			}
+		}
+
+	}
 
 }
