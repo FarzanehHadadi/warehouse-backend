@@ -17,6 +17,7 @@ func NewResponse() *Response {
 func (r *Response) SuccessResponse(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusOK, gin.H{"data": data})
 }
+
 type PaginatedList[T any] struct {
 	Items      []T    `json:"items"`
 	NextCursor string `json:"next_cursor"`
@@ -38,6 +39,9 @@ func (r *Response) ListSuccessResponse(c *gin.Context, data any) {
 }
 
 func (r *Response) CreatedResponse(c *gin.Context, data interface{}) {
+	c.JSON(http.StatusCreated, gin.H{
+		"data": data,
+	})
 }
 
 func (r *Response) NoContentResponse(c *gin.Context) {

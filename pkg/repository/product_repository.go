@@ -33,7 +33,7 @@ func (pr *productRepository) FindByID(productId uint) (*models.Product, error) {
 
 	var product *models.Product
 
-	err := pr.db.Preload("Units").Preload("Categories").First(&product, productId).Error
+	err := pr.db.Preload("Unit").Preload("Category").First(&product, productId).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrNotFound
@@ -77,8 +77,8 @@ func (pr *productRepository) GetList(req filter.Request) ([]*models.Product, *fi
 	if err != nil {
 		return nil, nil, err
 	}
-	query = query.Preload("Units")
-	query = query.Preload("Categories")
+	query = query.Preload("Unit")
+	query = query.Preload("Category")
 	var products []*models.Product
 	if err := query.Find(&products).Error; err != nil {
 

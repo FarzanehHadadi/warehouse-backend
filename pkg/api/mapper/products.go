@@ -16,8 +16,8 @@ func ToProductDetailResponse(product *models.Product) dto.ProductSummary {
 		CategoryID:       product.CategoryID,
 		WarningThreshold: product.WarningThreshold,
 		UnitID:           product.UnitID,
-		Category:         ToCategorySummaries(product.Category),
-		Unit:             ToUnitSummaries(product.Unit),
+		Category:         ToCategorySummaries(*product.Category),
+		Unit:             ToUnitSummaries(*product.Unit),
 	}
 }
 
