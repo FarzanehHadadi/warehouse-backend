@@ -114,5 +114,20 @@ func (r *Router) setupRoutes() {
 		}
 
 	}
+	stores := v1.Group("/stores")
+	{
+		stores.GET("/", r.handler.HandleGetStoreList)
+		protectedStores := stores.Group("/", middleware.JwtAuth())
+		{
+			protectedStores.POST("/", r.handler.HandlePostStore)
+			withIdStores := protectedStores.Group("/:id", middleware.IDMiddleware())
+			{
+				withIdStores.GET("/", r.handler.HandleGetStore)
+				withIdStores.PATCH("/", r.handler.HandlePatchStore)
+				withIdStores.DELETE("/", r.handler.HandleDeleteStore)
+			}
+		}
+
+	}
 
 }

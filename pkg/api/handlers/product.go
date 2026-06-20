@@ -40,8 +40,10 @@ func (h *Handler) HandleGetProduct(c *gin.Context) {
 // @Produce      json
 // @Security     ApiKeyAuth
 // @Param        name            query    string    false  "Filter by name (partial match)"
+// @Param        category_id            query    int    false  "Filter by Category "
+// @Param        unit_id            query    int    false  "Filter by unit"
 // @Param        created_after   query    string    false  "Created after date (YYYY-MM-DD)"
-// @Param        created_from   query    string    false  "Created before date (YYYY-MM-DD)"
+// @Param        created_before   query    string    false  "Created before date (YYYY-MM-DD)"
 // @Param        sort_by         query    string    false  "Sort field" Enums(id,name,created_at)
 // @Param        sort_order      query    string    false  "Sort direction" Enums(asc,desc)
 // @Param        cursor          query    string    false  "Cursor for next page"

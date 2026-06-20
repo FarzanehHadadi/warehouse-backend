@@ -609,7 +609,7 @@
                     {
                         "type": "string",
                         "description": "Created before date (YYYY-MM-DD)",
-                        "name": "created_from",
+                        "name": "created_before",
                         "in": "query"
                     },
                     {
@@ -909,6 +909,18 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "Filter by Category ",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by unit",
+                        "name": "unit_id",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Created after date (YYYY-MM-DD)",
                         "name": "created_after",
@@ -917,7 +929,7 @@
                     {
                         "type": "string",
                         "description": "Created before date (YYYY-MM-DD)",
-                        "name": "created_from",
+                        "name": "created_before",
                         "in": "query"
                     },
                     {
@@ -1169,6 +1181,320 @@
                 "responses": {
                     "200": {
                         "description": "No Content - product successfully updated"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/stores": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve stores with filtering, search, and cursor pagination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Get stores List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by name (partial match)",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by manager name (partial match)",
+                        "name": "manager_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created after date (YYYY-MM-DD)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created before date (YYYY-MM-DD)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "id",
+                            "name",
+                            "created_at"
+                        ],
+                        "type": "string",
+                        "description": "Sort field",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort direction",
+                        "name": "sort_order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cursor for next page",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Number of items per page (max 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.storeListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Create a store",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Create a store",
+                "parameters": [
+                    {
+                        "description": "store object with updated data",
+                        "name": "store",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StoreUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StoreSummary"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/stores/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get a single store by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Get store by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "store ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StoreSummary"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a store",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Delete a store",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "store ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Modify a store",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Modify a store",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "store ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "store object with updated data",
+                        "name": "store",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StoreUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No Content - store successfully updated"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -1576,6 +1902,23 @@
                 }
             }
         },
+        "dto.StoreSummary": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "manager_name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Store 1"
+                }
+            }
+        },
         "dto.SuccessAuthResponse": {
             "type": "object",
             "properties": {
@@ -1673,6 +2016,29 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.ProductSummary"
+                    }
+                },
+                "limit": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "next_cursor": {
+                    "type": "string",
+                    "example": ""
+                }
+            }
+        },
+        "dto.storeListResponse": {
+            "type": "object",
+            "properties": {
+                "has_more": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.StoreSummary"
                     }
                 },
                 "limit": {
@@ -1791,6 +2157,19 @@
                 "warning_threshold": {
                     "type": "integer",
                     "minimum": 1
+                }
+            }
+        },
+        "models.StoreUpdate": {
+            "type": "object",
+            "properties": {
+                "manager_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3
                 }
             }
         },

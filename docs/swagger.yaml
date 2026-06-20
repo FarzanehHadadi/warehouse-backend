@@ -116,6 +116,18 @@ definitions:
         example: 1
         type: integer
     type: object
+  dto.StoreSummary:
+    properties:
+      id:
+        example: 1
+        type: integer
+      manager_name:
+        example: John Doe
+        type: string
+      name:
+        example: Store 1
+        type: string
+    type: object
   dto.SuccessAuthResponse:
     properties:
       token:
@@ -180,6 +192,22 @@ definitions:
       items:
         items:
           $ref: '#/definitions/dto.ProductSummary'
+        type: array
+      limit:
+        example: 20
+        type: integer
+      next_cursor:
+        example: ""
+        type: string
+    type: object
+  dto.storeListResponse:
+    properties:
+      has_more:
+        example: true
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/dto.StoreSummary'
         type: array
       limit:
         example: 20
@@ -263,6 +291,15 @@ definitions:
     - name
     - unit_id
     - warning_threshold
+    type: object
+  models.StoreUpdate:
+    properties:
+      manager_id:
+        type: integer
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
     type: object
   models.Unit:
     properties:
@@ -654,7 +691,7 @@ paths:
         type: string
       - description: Created before date (YYYY-MM-DD)
         in: query
-        name: created_from
+        name: created_before
         type: string
       - description: Sort field
         enum:
@@ -843,13 +880,21 @@ paths:
         in: query
         name: name
         type: string
+      - description: 'Filter by Category '
+        in: query
+        name: category_id
+        type: integer
+      - description: Filter by unit
+        in: query
+        name: unit_id
+        type: integer
       - description: Created after date (YYYY-MM-DD)
         in: query
         name: created_after
         type: string
       - description: Created before date (YYYY-MM-DD)
         in: query
-        name: created_from
+        name: created_before
         type: string
       - description: Sort field
         enum:
@@ -1028,6 +1073,205 @@ paths:
       summary: Modify a product
       tags:
       - Products
+  /v1/stores:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve stores with filtering, search, and cursor pagination
+      parameters:
+      - description: Filter by name (partial match)
+        in: query
+        name: name
+        type: string
+      - description: Filter by manager name (partial match)
+        in: query
+        name: manager_name
+        type: string
+      - description: Created after date (YYYY-MM-DD)
+        in: query
+        name: created_after
+        type: string
+      - description: Created before date (YYYY-MM-DD)
+        in: query
+        name: created_before
+        type: string
+      - description: Sort field
+        enum:
+        - id
+        - name
+        - created_at
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      - description: Cursor for next page
+        in: query
+        name: cursor
+        type: string
+      - description: Number of items per page (max 100)
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.storeListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get stores List
+      tags:
+      - Stores
+    post:
+      consumes:
+      - application/json
+      description: Create a store
+      parameters:
+      - description: store object with updated data
+        in: body
+        name: store
+        required: true
+        schema:
+          $ref: '#/definitions/models.StoreUpdate'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/dto.StoreSummary'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Create a store
+      tags:
+      - Stores
+  /v1/stores/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a store
+      parameters:
+      - description: store ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Delete a store
+      tags:
+      - Stores
+    get:
+      consumes:
+      - application/json
+      description: Get a single store by its ID
+      parameters:
+      - description: store ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StoreSummary'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Get store by ID
+      tags:
+      - Stores
+    patch:
+      consumes:
+      - application/json
+      description: Modify a store
+      parameters:
+      - description: store ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: store object with updated data
+        in: body
+        name: store
+        required: true
+        schema:
+          $ref: '#/definitions/models.StoreUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content - store successfully updated
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Modify a store
+      tags:
+      - Stores
   /v1/units:
     get:
       consumes:
