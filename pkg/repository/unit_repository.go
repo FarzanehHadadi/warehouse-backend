@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"warehouse/pkg/api/filter"
 	"warehouse/pkg/models"
 
 	"gorm.io/gorm"
@@ -59,17 +60,45 @@ func (ur *unitRepository) Update(unitId uint, unit *models.Unit) error {
 	}
 	return nil
 }
-func (ur *unitRepository) GetList() ([]models.Unit, error) {
-	var units []models.Unit
-	ctx, cancelFunc := context.WithTimeout(context.Background(), databaseTimeout)
-	defer cancelFunc()
-	result := ur.db.WithContext(ctx).Find(&units)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	if units == nil {
-		return []models.Unit{}, nil
-	}
-	return units, nil
+func (ur *unitRepository) GetList(req filter.Request) ([]*models.Unit, *filter.CursorResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), databaseTimeout)
+	defer cancel()
 
+	query := ur.db.WithContext(ctx).Model(&models.Unit{})
+
+	query, err := filter.Apply(query, req, filter.SimpleFilterConfig)
+	if err != nil {
+		return nil, nil, err
+	}
+	query, err = filter.ApplyCursor(query, req, filter.SimpleFilterConfig)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var units []*models.Unit
+	if err := query.Find(&units).Error; err != nil {
+		return nil, nil, err
+	}
+
+	limit := req.Limit
+	if limit <= 0 {
+		limit = 20
+	}
+	hasMore := len(units) > limit
+	if hasMore {
+		units = units[:limit]
+	}
+
+	var nextCursor string
+	if len(units) > 0 {
+		last := units[len(units)-1]
+		if hasMore {
+			nextCursor = filter.EncodeCursor(last.ID, last.CreatedAt)
+		}
+	}
+
+	return units, &filter.CursorResponse{
+		NextCursor: nextCursor,
+		HasMore:    hasMore,
+	}, nil
 }

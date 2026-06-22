@@ -14,6 +14,7 @@ func ToStoreDetailResponse(store *models.Store) dto.StoreSummary {
 		ID:          store.ID,
 		Name:        store.Name,
 		ManagerName: store.Manager.Name,
+		IsActive:    store.IsActive,
 	}
 }
 

@@ -36,10 +36,19 @@ definitions:
     type: object
   dto.DepartmentListResponse:
     properties:
-      data:
+      has_more:
+        example: true
+        type: boolean
+      items:
         items:
           $ref: '#/definitions/models.Department'
         type: array
+      limit:
+        example: 20
+        type: integer
+      next_cursor:
+        example: ""
+        type: string
     type: object
   dto.DepartmentSummary:
     properties:
@@ -121,6 +130,9 @@ definitions:
       id:
         example: 1
         type: integer
+      is_active:
+        example: true
+        type: boolean
       manager_name:
         example: John Doe
         type: string
@@ -135,10 +147,19 @@ definitions:
     type: object
   dto.SuccessCategoriesResponse:
     properties:
-      data:
+      has_more:
+        example: true
+        type: boolean
+      items:
         items:
           $ref: '#/definitions/models.Category'
         type: array
+      limit:
+        example: 20
+        type: integer
+      next_cursor:
+        example: ""
+        type: string
     type: object
   dto.SuccessCategoryResponse:
     properties:
@@ -147,10 +168,19 @@ definitions:
     type: object
   dto.SuccessUnitListResponse:
     properties:
-      data:
+      has_more:
+        example: true
+        type: boolean
+      items:
         items:
           $ref: '#/definitions/models.Unit'
         type: array
+      limit:
+        example: 20
+        type: integer
+      next_cursor:
+        example: ""
+        type: string
     type: object
   dto.SuccessUnitResponse:
     properties:
@@ -294,6 +324,8 @@ definitions:
     type: object
   models.StoreUpdate:
     properties:
+      is_active:
+        type: boolean
       manager_id:
         type: integer
       name:
@@ -362,7 +394,49 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get list of categories
+      description: Retrieve categories with filtering, search, and cursor pagination
+      parameters:
+      - description: Global search in name
+        in: query
+        name: search
+        type: string
+      - description: Filter by name (partial match)
+        in: query
+        name: name
+        type: string
+      - description: Created after date (YYYY-MM-DD)
+        in: query
+        name: created_after
+        type: string
+      - description: Created before date (YYYY-MM-DD)
+        in: query
+        name: created_before
+        type: string
+      - description: Sort field
+        enum:
+        - id
+        - name
+        - created_at
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      - description: Cursor for next page
+        in: query
+        name: cursor
+        type: string
+      - description: Number of items per page (max 100)
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -370,8 +444,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.SuccessCategoriesResponse'
-        "404":
-          description: Not Found
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
       security:
@@ -516,7 +594,49 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get list of departments
+      description: Retrieve departments with filtering, search, and cursor pagination
+      parameters:
+      - description: Global search in name
+        in: query
+        name: search
+        type: string
+      - description: Filter by name (partial match)
+        in: query
+        name: name
+        type: string
+      - description: Created after date (YYYY-MM-DD)
+        in: query
+        name: created_after
+        type: string
+      - description: Created before date (YYYY-MM-DD)
+        in: query
+        name: created_before
+        type: string
+      - description: Sort field
+        enum:
+        - id
+        - name
+        - created_at
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      - description: Cursor for next page
+        in: query
+        name: cursor
+        type: string
+      - description: Number of items per page (max 100)
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -524,8 +644,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.DepartmentListResponse'
-        "404":
-          description: Not Found
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
       security:
@@ -1276,7 +1400,49 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get list of units
+      description: Retrieve units with filtering, search, and cursor pagination
+      parameters:
+      - description: Global search in name
+        in: query
+        name: search
+        type: string
+      - description: Filter by name (partial match)
+        in: query
+        name: name
+        type: string
+      - description: Created after date (YYYY-MM-DD)
+        in: query
+        name: created_after
+        type: string
+      - description: Created before date (YYYY-MM-DD)
+        in: query
+        name: created_before
+        type: string
+      - description: Sort field
+        enum:
+        - id
+        - name
+        - created_at
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      - description: Cursor for next page
+        in: query
+        name: cursor
+        type: string
+      - description: Number of items per page (max 100)
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -1284,8 +1450,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.SuccessUnitListResponse'
-        "404":
-          description: Not Found
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
       security:

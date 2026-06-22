@@ -11,5 +11,8 @@ type DepartmentResponse struct {
 	Data models.Department `json:"data"`
 }
 type DepartmentListResponse struct {
-	Data []models.Department `json:"data"`
+	Items      []models.Department `json:"items"`
+	NextCursor string              `json:"next_cursor" example:""`
+	HasMore    bool                `json:"has_more" example:"true"`
+	Limit      int                 `json:"limit" example:"20"`
 }

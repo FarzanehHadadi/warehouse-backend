@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"warehouse/pkg/api/appresponse"
+	"warehouse/pkg/api/dto"
+	"warehouse/pkg/api/filter"
 	"warehouse/pkg/models"
 	"warehouse/pkg/repository"
 
@@ -43,21 +46,35 @@ func (h *Handler) HandleGetUnitById(c *gin.Context) {
 // HandleGetUnitList godoc
 //
 //	@Summary		Get list of units
-//	@Description	Get list of units
+//	@Description	Retrieve units with filtering, search, and cursor pagination
 //	@Tags			Units
 //	@Accept			json
 //	@Produce		json
-//	 @Security     ApiKeyAuth
+//	@Security		ApiKeyAuth
+//	@Param			search			query	string	false	"Global search in name"
+//	@Param			name			query	string	false	"Filter by name (partial match)"
+//	@Param			created_after	query	string	false	"Created after date (YYYY-MM-DD)"
+//	@Param			created_before	query	string	false	"Created before date (YYYY-MM-DD)"
+//	@Param			sort_by			query	string	false	"Sort field" Enums(id,name,created_at)
+//	@Param			sort_order		query	string	false	"Sort direction" Enums(asc,desc)
+//	@Param			cursor			query	string	false	"Cursor for next page"
+//	@Param			limit			query	integer	false	"Number of items per page (max 100)" minimum(1) maximum(100)
 //	@Success		200	{object}	dto.SuccessUnitListResponse
-//	@Failure		404	{object}	dto.ErrorResponse
+//	@Failure		400	{object}	dto.ErrorResponse
+//	@Failure		500	{object}	dto.ErrorResponse
 //	@Router			/v1/units [get]
 func (h *Handler) HandleGetUnitList(c *gin.Context) {
-	unitsList, err := h.Repository.Unit.GetList()
+	req := dto.NewPaginationRequestFromConfig(c, filter.SimpleFilterConfig)
+	unitsList, cursorResp, err := h.Repository.Unit.GetList(*req)
 	if err != nil {
 		h.Response.InternalServerErr(c, err.Error())
 		return
 	}
-	h.Response.SuccessResponse(c, unitsList)
+	h.Response.ListSuccessResponse(c, appresponse.NewPaginatedList(
+		unitsList,
+		*cursorResp,
+		req.Limit,
+	))
 }
 
 // HandlePostUnit godoc

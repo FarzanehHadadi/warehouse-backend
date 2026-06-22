@@ -79,7 +79,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get list of categories",
+                "description": "Retrieve categories with filtering, search, and cursor pagination",
                 "consumes": [
                     "application/json"
                 ],
@@ -90,6 +90,67 @@ const docTemplate = `{
                     "Categories"
                 ],
                 "summary": "Get list of categories",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Global search in name",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by name (partial match)",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created after date (YYYY-MM-DD)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created before date (YYYY-MM-DD)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "id",
+                            "name",
+                            "created_at"
+                        ],
+                        "type": "string",
+                        "description": "Sort field",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort direction",
+                        "name": "sort_order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cursor for next page",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Number of items per page (max 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -97,8 +158,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.SuccessCategoriesResponse"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorResponse"
                         }
@@ -326,7 +393,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get list of departments",
+                "description": "Retrieve departments with filtering, search, and cursor pagination",
                 "consumes": [
                     "application/json"
                 ],
@@ -337,6 +404,67 @@ const docTemplate = `{
                     "Departments"
                 ],
                 "summary": "Get list of departments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Global search in name",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by name (partial match)",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created after date (YYYY-MM-DD)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created before date (YYYY-MM-DD)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "id",
+                            "name",
+                            "created_at"
+                        ],
+                        "type": "string",
+                        "description": "Sort field",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort direction",
+                        "name": "sort_order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cursor for next page",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Number of items per page (max 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -344,8 +472,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.DepartmentListResponse"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorResponse"
                         }
@@ -1530,7 +1664,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get list of units",
+                "description": "Retrieve units with filtering, search, and cursor pagination",
                 "consumes": [
                     "application/json"
                 ],
@@ -1541,6 +1675,67 @@ const docTemplate = `{
                     "Units"
                 ],
                 "summary": "Get list of units",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Global search in name",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by name (partial match)",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created after date (YYYY-MM-DD)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created before date (YYYY-MM-DD)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "id",
+                            "name",
+                            "created_at"
+                        ],
+                        "type": "string",
+                        "description": "Sort field",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort direction",
+                        "name": "sort_order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cursor for next page",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Number of items per page (max 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1548,8 +1743,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.SuccessUnitListResponse"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorResponse"
                         }
@@ -1792,11 +1993,23 @@ const docTemplate = `{
         "dto.DepartmentListResponse": {
             "type": "object",
             "properties": {
-                "data": {
+                "has_more": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "items": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Department"
                     }
+                },
+                "limit": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "next_cursor": {
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
@@ -1915,6 +2128,10 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 1
                 },
+                "is_active": {
+                    "type": "boolean",
+                    "example": true
+                },
                 "manager_name": {
                     "type": "string",
                     "example": "John Doe"
@@ -1936,11 +2153,23 @@ const docTemplate = `{
         "dto.SuccessCategoriesResponse": {
             "type": "object",
             "properties": {
-                "data": {
+                "has_more": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "items": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Category"
                     }
+                },
+                "limit": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "next_cursor": {
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
@@ -1955,11 +2184,23 @@ const docTemplate = `{
         "dto.SuccessUnitListResponse": {
             "type": "object",
             "properties": {
-                "data": {
+                "has_more": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "items": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Unit"
                     }
+                },
+                "limit": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "next_cursor": {
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
@@ -2169,6 +2410,9 @@ const docTemplate = `{
         "models.StoreUpdate": {
             "type": "object",
             "properties": {
+                "is_active": {
+                    "type": "boolean"
+                },
                 "manager_id": {
                     "type": "integer"
                 },

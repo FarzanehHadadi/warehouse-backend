@@ -9,7 +9,10 @@ type SuccessCategoryResponse struct {
 	Data models.Category `json:"data"`
 }
 type SuccessCategoriesResponse struct {
-	Data []models.Category `json:"data"`
+	Items      []models.Category `json:"items"`
+	NextCursor string            `json:"next_cursor" example:""`
+	HasMore    bool              `json:"has_more" example:"true"`
+	Limit      int               `json:"limit" example:"20"`
 }
 
 // ErrorResponse wraps error responses

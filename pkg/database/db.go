@@ -57,7 +57,7 @@ func NewPostgresConfiguration(cfg *dbConfig) (*gorm.DB, error) {
 	if err := db.AutoMigrate(
 		&models.User{}, &models.Category{}, &models.Unit{},
 		&models.Department{}, &models.Manager{},
-		&models.Product{}, &models.Store{},
+		&models.Product{}, &models.Store{}, &models.Order{},
 	); err != nil {
 		log.Fatal("Failed to migrate:", err)
 	}

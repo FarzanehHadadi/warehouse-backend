@@ -10,7 +10,10 @@ type SuccessUnitResponse struct {
 	Data models.Unit `json:"data"`
 }
 type SuccessUnitListResponse struct {
-	Data []models.Unit `json:"data"`
+	Items      []models.Unit `json:"items"`
+	NextCursor string        `json:"next_cursor" example:""`
+	HasMore    bool          `json:"has_more" example:"true"`
+	Limit      int           `json:"limit" example:"20"`
 }
 type Summary struct {
 	ID   uint   `json:"id"`

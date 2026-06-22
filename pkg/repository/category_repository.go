@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"warehouse/pkg/api/filter"
 	"warehouse/pkg/models"
 
 	"gorm.io/gorm"
@@ -55,17 +56,45 @@ func (cr *categoryRepository) Update(id uint, cat *models.Category) error {
 	}
 	return nil
 }
-func (cr *categoryRepository) GetList() ([]models.Category, error) {
-	ctx, cancelFunc := context.WithTimeout(context.Background(), databaseTimeout)
-	defer cancelFunc()
-	var categories []models.Category
-	result := cr.db.WithContext(ctx).Find(&categories)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	if categories == nil {
-		return []models.Category{}, nil
-	}
-	return categories, nil
+func (cr *categoryRepository) GetList(req filter.Request) ([]*models.Category, *filter.CursorResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), databaseTimeout)
+	defer cancel()
 
+	query := cr.db.WithContext(ctx).Model(&models.Category{})
+
+	query, err := filter.Apply(query, req, filter.SimpleFilterConfig)
+	if err != nil {
+		return nil, nil, err
+	}
+	query, err = filter.ApplyCursor(query, req, filter.SimpleFilterConfig)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var categories []*models.Category
+	if err := query.Find(&categories).Error; err != nil {
+		return nil, nil, err
+	}
+
+	limit := req.Limit
+	if limit <= 0 {
+		limit = 20
+	}
+	hasMore := len(categories) > limit
+	if hasMore {
+		categories = categories[:limit]
+	}
+
+	var nextCursor string
+	if len(categories) > 0 {
+		last := categories[len(categories)-1]
+		if hasMore {
+			nextCursor = filter.EncodeCursor(last.ID, last.CreatedAt)
+		}
+	}
+
+	return categories, &filter.CursorResponse{
+		NextCursor: nextCursor,
+		HasMore:    hasMore,
+	}, nil
 }

@@ -17,21 +17,21 @@ type CategoryRepository interface {
 	FindByID(id uint) (*models.Category, error)
 	Delete(id uint) error
 	Update(id uint, cat *models.Category) error
-	GetList() ([]models.Category, error)
+	GetList(req filter.Request) ([]*models.Category, *filter.CursorResponse, error)
 }
 type UnitRepository interface {
 	Create(unit *models.Unit) (*models.Unit, error)
 	FindByID(unitId uint) (*models.Unit, error)
 	Delete(unitId uint) error
 	Update(unitId uint, unit *models.Unit) error
-	GetList() ([]models.Unit, error)
+	GetList(req filter.Request) ([]*models.Unit, *filter.CursorResponse, error)
 }
 type DepartmentRepository interface {
 	Create(department *models.Department) (*models.Department, error)
 	FindByID(departmentId uint) (*models.Department, error)
 	Delete(departmentId uint) error
 	Update(departmentId uint, department *models.DepartmentUpdate) error
-	GetList() ([]models.Department, error)
+	GetList(req filter.Request) ([]*models.Department, *filter.CursorResponse, error)
 }
 type ManagerRepository interface {
 	Create(Manager *models.Manager) (*models.Manager, error)
@@ -54,6 +54,13 @@ type StoreRepository interface {
 	Update(storeId uint, store *models.StoreUpdate) error
 	GetList(req filter.Request) ([]*models.Store, *filter.CursorResponse, error)
 }
+type OrderRepository interface {
+	Create(order *models.Order) (*models.Order, error)
+	FindByID(orderId uint) (*models.Order, error)
+	Delete(orderId uint) error
+	Update(orderId uint, store *models.OrderUpdate) error
+	GetList(req filter.Request) ([]*models.Order, *filter.CursorResponse, error)
+}
 
 // Repository holds all repositories
 type Repository struct {
@@ -64,4 +71,5 @@ type Repository struct {
 	Manager    ManagerRepository
 	Product    ProductRepository
 	Store      StoreRepository
+	Order      OrderRepository
 }

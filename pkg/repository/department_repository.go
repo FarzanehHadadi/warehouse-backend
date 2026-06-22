@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"warehouse/pkg/api/filter"
 	"warehouse/pkg/models"
 
 	"gorm.io/gorm"
@@ -68,17 +69,48 @@ func (dr *departmentRepository) Update(departmentId uint, department *models.Dep
 	}
 	return nil
 }
-func (dr *departmentRepository) GetList() ([]models.Department, error) {
-	ctx, cancelFunc := context.WithTimeout(context.Background(), databaseTimeout)
-	defer cancelFunc()
+func (dr *departmentRepository) GetList(req filter.Request) ([]*models.Department, *filter.CursorResponse, error) {
 
-	var departments []models.Department
-	result := dr.db.WithContext(ctx).Preload("Manager").Find(&departments)
-	if result.Error != nil {
-		return nil, result.Error
+	ctx, cancel := context.WithTimeout(context.Background(), databaseTimeout)
+	defer cancel()
+
+	query := dr.db.WithContext(ctx).Model(&models.Department{})
+
+	query, err := filter.Apply(query, req, filter.SimpleFilterConfig)
+	if err != nil {
+		return nil, nil, err
 	}
-	if result.RowsAffected == 0 {
-		return []models.Department{}, nil
+	query, err = filter.ApplyCursor(query, req, filter.SimpleFilterConfig)
+	if err != nil {
+		return nil, nil, err
 	}
-	return departments, nil
+	query = query.Preload("Manager")
+	var departments []*models.Department
+	if err := query.Find(&departments).Error; err != nil {
+		return nil, nil, err
+	}
+	limit := req.Limit
+	if limit <= 0 {
+		limit = 20
+	}
+	hasMore := len(departments) > limit
+	if hasMore {
+		departments = departments[:limit]
+	}
+
+	var nextCursor string
+	if len(departments) > 0 {
+		last := departments[len(departments)-1]
+		if hasMore {
+			nextCursor = filter.EncodeCursor(last.ID, last.CreatedAt)
+		} else {
+			nextCursor = ""
+		}
+	}
+
+	return departments, &filter.CursorResponse{
+		NextCursor: nextCursor,
+		HasMore:    hasMore,
+	}, nil
+
 }

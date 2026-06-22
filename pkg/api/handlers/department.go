@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"errors"
+	"warehouse/pkg/api/appresponse"
+	"warehouse/pkg/api/dto"
+	"warehouse/pkg/api/filter"
 	"warehouse/pkg/models"
 	"warehouse/pkg/repository"
 
@@ -149,25 +152,33 @@ func (h *Handler) HandleDeleteDepartment(c *gin.Context) {
 // HandleGetDepartmentList godoc
 //
 //	@Summary		Get list of departments
-//	@Description	Get list of departments
+//	@Description	Retrieve departments with filtering, search, and cursor pagination
 //	@Tags			Departments
-//	 @Security     ApiKeyAuth
+//	@Security		ApiKeyAuth
 //	@Accept			json
 //	@Produce		json
+//	@Param			search			query	string	false	"Global search in name"
+//	@Param			name			query	string	false	"Filter by name (partial match)"
+//	@Param			created_after	query	string	false	"Created after date (YYYY-MM-DD)"
+//	@Param			created_before	query	string	false	"Created before date (YYYY-MM-DD)"
+//	@Param			sort_by			query	string	false	"Sort field" Enums(id,name,created_at)
+//	@Param			sort_order		query	string	false	"Sort direction" Enums(asc,desc)
+//	@Param			cursor			query	string	false	"Cursor for next page"
+//	@Param			limit			query	integer	false	"Number of items per page (max 100)" minimum(1) maximum(100)
 //	@Success		200	{object}	dto.DepartmentListResponse
-//	@Failure		404	{object}	dto.ErrorResponse
+//	@Failure		400	{object}	dto.ErrorResponse
+//	@Failure		500	{object}	dto.ErrorResponse
 //	@Router			/v1/departments [get]
 func (h *Handler) HandleGetDepartmentList(c *gin.Context) {
-	depList, err := h.Repository.Department.GetList()
+	req := dto.NewPaginationRequestFromConfig(c, filter.SimpleFilterConfig)
+	depList, cursorResp, err := h.Repository.Department.GetList(*req)
 	if err != nil {
-		switch err {
-		case repository.ErrNotFound:
-			h.Response.NotFoundErr(c, "Department")
-		default:
-			h.Response.InternalServerErr(c, err.Error())
-
-		}
+		h.Response.InternalServerErr(c, err.Error())
 		return
 	}
-	h.Response.SuccessResponse(c, depList)
+	h.Response.ListSuccessResponse(c, appresponse.NewPaginatedList(
+		depList,
+		*cursorResp,
+		req.Limit,
+	))
 }
