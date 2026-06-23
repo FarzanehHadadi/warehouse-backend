@@ -25,6 +25,57 @@ definitions:
     - name
     - phone
     type: object
+  dto.CreateOrderRequest:
+    properties:
+      department_id:
+        example: 1
+        type: integer
+      description:
+        example: Stock intake
+        type: string
+      expire_date:
+        example: "2026-12-31T00:00:00Z"
+        type: string
+      price:
+        example: 1000
+        minimum: 0
+        type: integer
+      product_id:
+        example: 1
+        type: integer
+      product_status:
+        allOf:
+        - $ref: '#/definitions/models.ProductStatus'
+        enum:
+        - good
+        - defective
+        - unknown
+        example: good
+      quantity:
+        example: 10
+        minimum: 1
+        type: integer
+      store_id:
+        example: 1
+        type: integer
+      type:
+        allOf:
+        - $ref: '#/definitions/models.OrderType'
+        enum:
+        - inbound
+        - outbound
+        example: inbound
+    required:
+    - department_id
+    - description
+    - expire_date
+    - price
+    - product_id
+    - product_status
+    - quantity
+    - store_id
+    - type
+    type: object
   dto.Department:
     properties:
       manager_id:
@@ -103,6 +154,38 @@ definitions:
         example: "+1234567890"
         type: string
     type: object
+  dto.OrderSummary:
+    properties:
+      department:
+        $ref: '#/definitions/dto.SimpleSummary'
+      description:
+        example: Stock intake
+        type: string
+      expire_date:
+        example: "2026-12-31T00:00:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      price:
+        example: 1000
+        type: integer
+      product:
+        $ref: '#/definitions/dto.SimpleSummary'
+      product_status:
+        allOf:
+        - $ref: '#/definitions/models.ProductStatus'
+        example: good
+      quantity:
+        example: 10
+        type: integer
+      store:
+        $ref: '#/definitions/dto.SimpleSummary'
+      type:
+        allOf:
+        - $ref: '#/definitions/models.OrderType'
+        example: inbound
+    type: object
   dto.ProductSummary:
     properties:
       category:
@@ -124,6 +207,15 @@ definitions:
       warning_threshold:
         example: 1
         type: integer
+    type: object
+  dto.SimpleSummary:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Product 1
+        type: string
     type: object
   dto.StoreSummary:
     properties:
@@ -201,6 +293,47 @@ definitions:
     required:
     - name
     type: object
+  dto.UpdateOrderRequest:
+    properties:
+      department_id:
+        example: 1
+        type: integer
+      description:
+        example: Updated note
+        type: string
+      expire_date:
+        example: "2026-12-31T00:00:00Z"
+        type: string
+      price:
+        example: 500
+        minimum: 0
+        type: integer
+      product_id:
+        example: 1
+        type: integer
+      product_status:
+        allOf:
+        - $ref: '#/definitions/models.ProductStatus'
+        enum:
+        - good
+        - defective
+        - unknown
+        example: defective
+      quantity:
+        example: 5
+        minimum: 1
+        type: integer
+      store_id:
+        example: 1
+        type: integer
+      type:
+        allOf:
+        - $ref: '#/definitions/models.OrderType'
+        enum:
+        - inbound
+        - outbound
+        example: outbound
+    type: object
   dto.UserDto:
     properties:
       mobile:
@@ -213,6 +346,22 @@ definitions:
     required:
     - mobile
     - password
+    type: object
+  dto.orderListResponse:
+    properties:
+      has_more:
+        example: true
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/dto.OrderSummary'
+        type: array
+      limit:
+        example: 20
+        type: integer
+      next_cursor:
+        example: ""
+        type: string
     type: object
   dto.productListResponse:
     properties:
@@ -303,6 +452,24 @@ definitions:
     - name
     - phone
     type: object
+  models.OrderType:
+    enum:
+    - inbound
+    - outbound
+    type: string
+    x-enum-varnames:
+    - OrderTypeInbound
+    - OrderTypeOutbound
+  models.ProductStatus:
+    enum:
+    - good
+    - defective
+    - unknown
+    type: string
+    x-enum-varnames:
+    - ProductStatusGood
+    - ProductStatusDefective
+    - ProductStatusUnknown
   models.ProductUpdate:
     properties:
       category_id:
@@ -994,6 +1161,224 @@ paths:
       summary: Modify a Manager
       tags:
       - Managers
+  /v1/orders:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve orders with filtering, search, and cursor pagination
+      parameters:
+      - description: Filter by product status
+        enum:
+        - good
+        - defective
+        - unknown
+        in: query
+        name: product_status
+        type: string
+      - description: Filter by type
+        enum:
+        - inbound
+        - outbound
+        in: query
+        name: type
+        type: string
+      - description: Created after date (YYYY-MM-DD)
+        in: query
+        name: created_after
+        type: string
+      - description: Created before date (YYYY-MM-DD)
+        in: query
+        name: created_before
+        type: string
+      - description: Filter by product ID
+        in: query
+        name: product_id
+        type: integer
+      - description: Filter by store ID
+        in: query
+        name: store_id
+        type: integer
+      - description: Filter by department ID
+        in: query
+        name: department_id
+        type: integer
+      - description: Sort field
+        enum:
+        - id
+        - name
+        - created_at
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      - description: Cursor for next page
+        in: query
+        name: cursor
+        type: string
+      - description: Number of items per page (max 100)
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.orderListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get orders List
+      tags:
+      - Orders
+    post:
+      consumes:
+      - application/json
+      description: Create a order
+      parameters:
+      - description: Order object
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.OrderSummary'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Create a order
+      tags:
+      - Orders
+  /v1/orders/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a order
+      parameters:
+      - description: order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Delete a order
+      tags:
+      - Orders
+    get:
+      consumes:
+      - application/json
+      description: Get a single order by its ID
+      parameters:
+      - description: order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OrderSummary'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Get order by ID
+      tags:
+      - Orders
+    patch:
+      consumes:
+      - application/json
+      description: Modify a order
+      parameters:
+      - description: order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Order object with updated data
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content - order successfully updated
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Modify a order
+      tags:
+      - Orders
   /v1/products:
     get:
       consumes:

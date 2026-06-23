@@ -58,7 +58,7 @@ type OrderRepository interface {
 	Create(order *models.Order) (*models.Order, error)
 	FindByID(orderId uint) (*models.Order, error)
 	Delete(orderId uint) error
-	Update(orderId uint, store *models.OrderUpdate) error
+	Update(orderId uint, order *models.OrderUpdate) error
 	GetList(req filter.Request) ([]*models.Order, *filter.CursorResponse, error)
 }
 

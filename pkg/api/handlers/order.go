@@ -5,9 +5,10 @@ import (
 	"warehouse/pkg/api/dto"
 	"warehouse/pkg/api/filter"
 	"warehouse/pkg/api/mapper"
-	"warehouse/pkg/models"
+	"warehouse/pkg/logger"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 // HandleGetOrder godoc
@@ -39,10 +40,13 @@ func (h *Handler) HandleGetOrder(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Security     ApiKeyAuth
-// @Param        name            query    string    false  "Filter by name (partial match)"
-// @Param        manager_name            query    string    false  "Filter by manager name (partial match)"
+// @Param        product_status      query    string    false  "Filter by product status" Enums(good,defective,unknown)
+// @Param        type      query    string    false  "Filter by type" Enums(inbound,outbound)
 // @Param        created_after   query    string    false  "Created after date (YYYY-MM-DD)"
 // @Param        created_before   query    string    false  "Created before date (YYYY-MM-DD)"
+// @Param        product_id       query    integer   false  "Filter by product ID"
+// @Param        store_id         query    integer   false  "Filter by store ID"
+// @Param        department_id    query    integer   false  "Filter by department ID"
 // @Param        sort_by         query    string    false  "Sort field" Enums(id,name,created_at)
 // @Param        sort_order      query    string    false  "Sort direction" Enums(asc,desc)
 // @Param        cursor          query    string    false  "Cursor for next page"
@@ -52,9 +56,9 @@ func (h *Handler) HandleGetOrder(c *gin.Context) {
 // @Router       /v1/orders [get]
 func (h *Handler) HandleGetOrderList(c *gin.Context) {
 	req := dto.NewPaginationRequestFromConfig(c, filter.OrderFilterConfig)
-
 	ordersList, cursorResp, err := h.Repository.Order.GetList(*req)
 	if err != nil {
+		logger.Log.Error("error getting orders list", zap.Error(err))
 		h.handleError(c, err, "Order")
 		return
 	}
@@ -72,21 +76,23 @@ func (h *Handler) HandleGetOrderList(c *gin.Context) {
 //	@Produce		json
 //	 @Security     ApiKeyAuth
 //	 @Security     Bearer
-//	@Param			order	body		models.OrderUpdate	true	"order object with updated data"
-//	@Success		204			{object}	dto.OrderSummary
+//	@Param			order	body		dto.CreateOrderRequest	true	"Order object"
+//	@Success		201			{object}	dto.OrderSummary
 //	@Failure		400			{object}	dto.ErrorResponse
 //	@Failure		404			{object}	dto.ErrorResponse
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/orders [post]
 func (h *Handler) HandlePostOrder(c *gin.Context) {
-	var order *models.Order
+	var req dto.CreateOrderRequest
 
-	if err := c.ShouldBindBodyWithJSON(&order); err != nil {
-		h.handleError(c, err, "Order")
+	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
+		logger.Log.Error("error binding body", zap.Error(err))
+		h.Response.BadRequestErr(c, err.Error())
 		return
 	}
-	ord, err := h.Repository.Order.Create(order)
+	ord, err := h.Repository.Order.Create(mapper.ToOrderFromCreateRequest(&req))
 	if err != nil {
+		logger.Log.Error("error creating order", zap.Error(err))
 		h.handleError(c, err, "Order")
 		return
 	}
@@ -105,7 +111,7 @@ func (h *Handler) HandlePostOrder(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id			path		int				true	"order ID"
-//	@Param			order	body		models.OrderUpdate	true	"order object with updated data"
+//	@Param			order	body		dto.UpdateOrderRequest	true	"Order object with updated data"
 //	@Success		200			"No Content - order successfully updated"
 //	@Failure		400			{object}	dto.ErrorResponse
 //	@Failure		404			{object}	dto.ErrorResponse
@@ -113,13 +119,13 @@ func (h *Handler) HandlePostOrder(c *gin.Context) {
 //	@Router			/v1/orders/{id} [patch]
 func (h *Handler) HandlePatchOrder(c *gin.Context) {
 	id := GetIDFromContext(c)
-	var order *models.OrderUpdate
+	var req dto.UpdateOrderRequest
 
-	if err := c.ShouldBindBodyWithJSON(&order); err != nil {
-		h.handleError(c, err, "Order")
+	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
+		h.Response.BadRequestErr(c, err.Error())
 		return
 	}
-	if err := h.Repository.Order.Update(id, order); err != nil {
+	if err := h.Repository.Order.Update(id, mapper.ToOrderUpdateFromRequest(&req)); err != nil {
 		h.handleError(c, err, "Order")
 		return
 

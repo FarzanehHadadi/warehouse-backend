@@ -132,7 +132,7 @@ func (r *Router) setupRoutes() {
 	orders := v1.Group("/orders")
 	{
 		orders.GET("/", r.handler.HandleGetOrderList)
-		protectedOrders := stores.Group("/", middleware.JwtAuth())
+		protectedOrders := orders.Group("/", middleware.JwtAuth())
 		{
 			protectedOrders.POST("/", r.handler.HandlePostOrder)
 			withIdOrders := protectedOrders.Group("/:id", middleware.IDMiddleware())

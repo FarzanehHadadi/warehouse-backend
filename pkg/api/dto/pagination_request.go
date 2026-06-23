@@ -5,10 +5,8 @@ import (
 	"strings"
 	"time"
 	"warehouse/pkg/api/filter"
-	"warehouse/pkg/logger"
 
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 var reservedQueryParams = map[string]struct{}{
@@ -66,12 +64,7 @@ func parseFieldFiltersFromConfig(c *gin.Context, r *filter.Request, cfg filter.C
 		}
 
 		rawValues := readQueryValues(c, fc.QueryParam, fc.Operator == filter.In)
-		logger.Log.Info("processing filter",
-			zap.Any("rawValues", rawValues),
-		)
-		logger.Log.Info("processing filter",
-			zap.Any("fc", fc),
-		)
+
 		if len(rawValues) == 0 {
 			continue
 		}

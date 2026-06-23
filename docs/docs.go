@@ -1023,6 +1023,347 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/orders": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve orders with filtering, search, and cursor pagination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get orders List",
+                "parameters": [
+                    {
+                        "enum": [
+                            "good",
+                            "defective",
+                            "unknown"
+                        ],
+                        "type": "string",
+                        "description": "Filter by product status",
+                        "name": "product_status",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "inbound",
+                            "outbound"
+                        ],
+                        "type": "string",
+                        "description": "Filter by type",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created after date (YYYY-MM-DD)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created before date (YYYY-MM-DD)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by product ID",
+                        "name": "product_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by store ID",
+                        "name": "store_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by department ID",
+                        "name": "department_id",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "id",
+                            "name",
+                            "created_at"
+                        ],
+                        "type": "string",
+                        "description": "Sort field",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort direction",
+                        "name": "sort_order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cursor for next page",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Number of items per page (max 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.orderListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Create a order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create a order",
+                "parameters": [
+                    {
+                        "description": "Order object",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrderSummary"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/orders/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get a single order by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get order by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrderSummary"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Delete a order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Modify a order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Modify a order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Order object with updated data",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No Content - order successfully updated"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/products": {
             "get": {
                 "security": [
@@ -1977,6 +2318,77 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CreateOrderRequest": {
+            "type": "object",
+            "required": [
+                "department_id",
+                "description",
+                "expire_date",
+                "price",
+                "product_id",
+                "product_status",
+                "quantity",
+                "store_id",
+                "type"
+            ],
+            "properties": {
+                "department_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Stock intake"
+                },
+                "expire_date": {
+                    "type": "string",
+                    "example": "2026-12-31T00:00:00Z"
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 1000
+                },
+                "product_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "product_status": {
+                    "enum": [
+                        "good",
+                        "defective",
+                        "unknown"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.ProductStatus"
+                        }
+                    ],
+                    "example": "good"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 10
+                },
+                "store_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "type": {
+                    "enum": [
+                        "inbound",
+                        "outbound"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.OrderType"
+                        }
+                    ],
+                    "example": "inbound"
+                }
+            }
+        },
         "dto.Department": {
             "type": "object",
             "properties": {
@@ -2090,6 +2502,56 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.OrderSummary": {
+            "type": "object",
+            "properties": {
+                "department": {
+                    "$ref": "#/definitions/dto.SimpleSummary"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Stock intake"
+                },
+                "expire_date": {
+                    "type": "string",
+                    "example": "2026-12-31T00:00:00Z"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "price": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "product": {
+                    "$ref": "#/definitions/dto.SimpleSummary"
+                },
+                "product_status": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.ProductStatus"
+                        }
+                    ],
+                    "example": "good"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "store": {
+                    "$ref": "#/definitions/dto.SimpleSummary"
+                },
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.OrderType"
+                        }
+                    ],
+                    "example": "inbound"
+                }
+            }
+        },
         "dto.ProductSummary": {
             "type": "object",
             "properties": {
@@ -2118,6 +2580,19 @@ const docTemplate = `{
                 "warning_threshold": {
                     "type": "integer",
                     "example": 1
+                }
+            }
+        },
+        "dto.SimpleSummary": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Product 1"
                 }
             }
         },
@@ -2234,6 +2709,66 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.UpdateOrderRequest": {
+            "type": "object",
+            "properties": {
+                "department_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Updated note"
+                },
+                "expire_date": {
+                    "type": "string",
+                    "example": "2026-12-31T00:00:00Z"
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 500
+                },
+                "product_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "product_status": {
+                    "enum": [
+                        "good",
+                        "defective",
+                        "unknown"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.ProductStatus"
+                        }
+                    ],
+                    "example": "defective"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 5
+                },
+                "store_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "type": {
+                    "enum": [
+                        "inbound",
+                        "outbound"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.OrderType"
+                        }
+                    ],
+                    "example": "outbound"
+                }
+            }
+        },
         "dto.UserDto": {
             "type": "object",
             "required": [
@@ -2249,6 +2784,29 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 72,
                     "minLength": 3
+                }
+            }
+        },
+        "dto.orderListResponse": {
+            "type": "object",
+            "properties": {
+                "has_more": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.OrderSummary"
+                    }
+                },
+                "limit": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "next_cursor": {
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
@@ -2380,6 +2938,30 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "models.OrderType": {
+            "type": "string",
+            "enum": [
+                "inbound",
+                "outbound"
+            ],
+            "x-enum-varnames": [
+                "OrderTypeInbound",
+                "OrderTypeOutbound"
+            ]
+        },
+        "models.ProductStatus": {
+            "type": "string",
+            "enum": [
+                "good",
+                "defective",
+                "unknown"
+            ],
+            "x-enum-varnames": [
+                "ProductStatusGood",
+                "ProductStatusDefective",
+                "ProductStatusUnknown"
+            ]
         },
         "models.ProductUpdate": {
             "type": "object",
