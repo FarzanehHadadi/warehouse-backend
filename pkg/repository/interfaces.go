@@ -46,6 +46,7 @@ type ProductRepository interface {
 	Delete(productId uint) error
 	Update(productId uint, product *models.ProductUpdate) error
 	GetList(req filter.Request) ([]*models.Product, *filter.CursorResponse, error)
+	Search(name string) ([]*models.Product, error)
 }
 type StoreRepository interface {
 	Create(store *models.Store) (*models.Store, error)
@@ -60,6 +61,7 @@ type OrderRepository interface {
 	Delete(orderId uint) error
 	Update(orderId uint, order *models.OrderUpdate) error
 	GetList(req filter.Request) ([]*models.Order, *filter.CursorResponse, error)
+	GetListNoPagination(req filter.Request) ([]*models.Order, error)
 }
 
 // Repository holds all repositories

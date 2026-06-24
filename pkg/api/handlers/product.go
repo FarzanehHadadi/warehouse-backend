@@ -152,3 +152,25 @@ func (h *Handler) HandleDeleteProduct(c *gin.Context) {
 	}
 	h.Response.NoContentResponse(c)
 }
+
+// @Summary      Search in products
+// @Description  Retrieve products with  search
+// @Tags         Products
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Security     Bearer
+// @Param        name            query    string    false  "Filter by name (partial match)"
+// @Success      200  { array}  dto.SimpleSummary
+// @Failure      400  {object}  dto.ErrorResponse
+// @Router       /v1/products/search [get]
+func (h *Handler) HandleSearchProductList(c *gin.Context) {
+	name := c.Query("name")
+
+	products, err := h.Repository.Product.Search(name)
+	if err != nil {
+		h.handleError(c, err, "Product")
+		return
+	}
+	h.Response.SuccessResponse(c, mapper.ToProductSummaries(products))
+}

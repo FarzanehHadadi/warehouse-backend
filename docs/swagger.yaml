@@ -34,7 +34,8 @@ definitions:
         example: Stock intake
         type: string
       expire_date:
-        example: "2026-12-31T00:00:00Z"
+        example: "2026-12-31"
+        format: date
         type: string
       price:
         example: 1000
@@ -158,11 +159,15 @@ definitions:
     properties:
       department:
         $ref: '#/definitions/dto.SimpleSummary'
+      department_id:
+        example: 1
+        type: integer
       description:
         example: Stock intake
         type: string
       expire_date:
-        example: "2026-12-31T00:00:00Z"
+        example: "2026-12-31"
+        format: date
         type: string
       id:
         example: 1
@@ -172,6 +177,9 @@ definitions:
         type: integer
       product:
         $ref: '#/definitions/dto.SimpleSummary'
+      product_id:
+        example: 1
+        type: integer
       product_status:
         allOf:
         - $ref: '#/definitions/models.ProductStatus'
@@ -181,6 +189,9 @@ definitions:
         type: integer
       store:
         $ref: '#/definitions/dto.SimpleSummary'
+      store_id:
+        example: 1
+        type: integer
       type:
         allOf:
         - $ref: '#/definitions/models.OrderType'
@@ -302,7 +313,8 @@ definitions:
         example: Updated note
         type: string
       expire_date:
-        example: "2026-12-31T00:00:00Z"
+        example: "2026-12-31"
+        format: date
         type: string
       price:
         example: 500
@@ -1379,6 +1391,83 @@ paths:
       summary: Modify a order
       tags:
       - Orders
+  /v1/orders/export:
+    get:
+      consumes:
+      - application/json
+      description: Export filtered orders as an Excel (.xlsx) file. Supports the same
+        query filters as the orders list endpoint.
+      parameters:
+      - description: Filter by product status
+        enum:
+        - good
+        - defective
+        - unknown
+        in: query
+        name: product_status
+        type: string
+      - description: Filter by order type
+        enum:
+        - inbound
+        - outbound
+        in: query
+        name: type
+        type: string
+      - description: Created after date (YYYY-MM-DD)
+        in: query
+        name: created_after
+        type: string
+      - description: Created before date (YYYY-MM-DD)
+        in: query
+        name: created_before
+        type: string
+      - description: Filter by product ID
+        in: query
+        name: product_id
+        type: integer
+      - description: Filter by store ID
+        in: query
+        name: store_id
+        type: integer
+      - description: Filter by department ID
+        in: query
+        name: department_id
+        type: integer
+      - description: Sort field
+        enum:
+        - id
+        - created_at
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      produces:
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      responses:
+        "200":
+          description: Excel file download
+          schema:
+            type: file
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Export orders to Excel
+      tags:
+      - Orders
   /v1/products:
     get:
       consumes:
@@ -1580,6 +1669,33 @@ paths:
       - ApiKeyAuth: []
       - Bearer: []
       summary: Modify a product
+      tags:
+      - Products
+  /v1/products/search:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve products with  search
+      parameters:
+      - description: Filter by name (partial match)
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Search in products
       tags:
       - Products
   /v1/stores:

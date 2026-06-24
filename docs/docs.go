@@ -1203,6 +1203,122 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/orders/export": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Export filtered orders as an Excel (.xlsx) file. Supports the same query filters as the orders list endpoint.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Export orders to Excel",
+                "parameters": [
+                    {
+                        "enum": [
+                            "good",
+                            "defective",
+                            "unknown"
+                        ],
+                        "type": "string",
+                        "description": "Filter by product status",
+                        "name": "product_status",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "inbound",
+                            "outbound"
+                        ],
+                        "type": "string",
+                        "description": "Filter by order type",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created after date (YYYY-MM-DD)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created before date (YYYY-MM-DD)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by product ID",
+                        "name": "product_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by store ID",
+                        "name": "store_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by department ID",
+                        "name": "department_id",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "id",
+                            "created_at"
+                        ],
+                        "type": "string",
+                        "description": "Sort field",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort direction",
+                        "name": "sort_order",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Excel file download",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/orders/{id}": {
             "get": {
                 "security": [
@@ -1516,6 +1632,51 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/products/search": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieve products with  search",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Search in products",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by name (partial match)",
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorResponse"
                         }
@@ -2342,7 +2503,8 @@ const docTemplate = `{
                 },
                 "expire_date": {
                     "type": "string",
-                    "example": "2026-12-31T00:00:00Z"
+                    "format": "date",
+                    "example": "2026-12-31"
                 },
                 "price": {
                     "type": "integer",
@@ -2508,13 +2670,18 @@ const docTemplate = `{
                 "department": {
                     "$ref": "#/definitions/dto.SimpleSummary"
                 },
+                "department_id": {
+                    "type": "integer",
+                    "example": 1
+                },
                 "description": {
                     "type": "string",
                     "example": "Stock intake"
                 },
                 "expire_date": {
                     "type": "string",
-                    "example": "2026-12-31T00:00:00Z"
+                    "format": "date",
+                    "example": "2026-12-31"
                 },
                 "id": {
                     "type": "integer",
@@ -2526,6 +2693,10 @@ const docTemplate = `{
                 },
                 "product": {
                     "$ref": "#/definitions/dto.SimpleSummary"
+                },
+                "product_id": {
+                    "type": "integer",
+                    "example": 1
                 },
                 "product_status": {
                     "allOf": [
@@ -2541,6 +2712,10 @@ const docTemplate = `{
                 },
                 "store": {
                     "$ref": "#/definitions/dto.SimpleSummary"
+                },
+                "store_id": {
+                    "type": "integer",
+                    "example": 1
                 },
                 "type": {
                     "allOf": [
@@ -2722,7 +2897,8 @@ const docTemplate = `{
                 },
                 "expire_date": {
                     "type": "string",
-                    "example": "2026-12-31T00:00:00Z"
+                    "format": "date",
+                    "example": "2026-12-31"
                 },
                 "price": {
                     "type": "integer",

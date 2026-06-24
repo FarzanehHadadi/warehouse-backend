@@ -20,6 +20,9 @@ func ToOrderDetailResponse(order *models.Order) dto.OrderSummary {
 		Product:       ToProductSummary(order.Product),
 		Store:         ToStoreSummary(order.Store),
 		Department:    ToDepartmentSummary(order.Department),
+		ProductID:     order.ProductID,
+		StoreID:       order.StoreID,
+		DepartmentID:  order.DepartmentID,
 	}
 }
 
@@ -77,6 +80,19 @@ func ToProductSummary(product *models.Product) *dto.SimpleSummary {
 		ID:   product.ID,
 		Name: product.Name,
 	}
+}
+func ToProductSummaries(products []*models.Product) []dto.SimpleSummary {
+	if products == nil {
+		return []dto.SimpleSummary{}
+	}
+	summaries := make([]dto.SimpleSummary, len(products))
+	for i, product := range products {
+		summaries[i] = dto.SimpleSummary{
+			ID:   product.ID,
+			Name: product.Name,
+		}
+	}
+	return summaries
 }
 func ToStoreSummary(store *models.Store) *dto.SimpleSummary {
 	if store == nil {

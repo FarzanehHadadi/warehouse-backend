@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"time"
 	"warehouse/pkg/models"
 )
 
@@ -17,9 +16,12 @@ type OrderSummary struct {
 	Description   string               `json:"description" example:"Stock intake"`
 	Quantity      int                  `json:"quantity" example:"10"`
 	Price         int                  `json:"price" example:"1000"`
-	ExpireDate    time.Time            `json:"expire_date" example:"2026-12-31T00:00:00Z"`
+	ExpireDate    models.Date          `json:"expire_date" swaggertype:"string" format:"date" example:"2026-12-31"`
 	ProductStatus models.ProductStatus `json:"product_status" example:"good"`
 	Type          models.OrderType     `json:"type" example:"inbound"`
+	ProductID     uint                 `json:"product_id" example:"1"`
+	StoreID       uint                 `json:"store_id" example:"1"`
+	DepartmentID  uint                 `json:"department_id" example:"1"`
 }
 
 type orderListResponse struct {
@@ -36,7 +38,7 @@ type CreateOrderRequest struct {
 	Type          models.OrderType     `json:"type" binding:"required,oneof=inbound outbound" enums:"inbound,outbound" example:"inbound"`
 	Quantity      int                  `json:"quantity" binding:"required,min=1" example:"10"`
 	Price         int                  `json:"price" binding:"required,min=0" example:"1000"`
-	ExpireDate    time.Time            `json:"expire_date" binding:"required" example:"2026-12-31T00:00:00Z"`
+	ExpireDate    models.Date          `json:"expire_date" binding:"required" swaggertype:"string" format:"date" example:"2026-12-31"`
 	ProductStatus models.ProductStatus `json:"product_status" binding:"required,oneof=good defective unknown" enums:"good,defective,unknown" example:"good"`
 	Description   string               `json:"description" binding:"required" example:"Stock intake"`
 }
@@ -48,7 +50,7 @@ type UpdateOrderRequest struct {
 	Type          *models.OrderType     `json:"type" binding:"omitempty,oneof=inbound outbound" enums:"inbound,outbound" example:"outbound"`
 	Quantity      *int                  `json:"quantity" binding:"omitempty,min=1" example:"5"`
 	Price         *int                  `json:"price" binding:"omitempty,min=0" example:"500"`
-	ExpireDate    *time.Time            `json:"expire_date" binding:"omitempty" example:"2026-12-31T00:00:00Z"`
+	ExpireDate    *models.Date          `json:"expire_date" binding:"omitempty" swaggertype:"string" format:"date" example:"2026-12-31"`
 	ProductStatus *models.ProductStatus `json:"product_status" binding:"omitempty,oneof=good defective unknown" enums:"good,defective,unknown" example:"defective"`
 	Description   *string               `json:"description" binding:"omitempty" example:"Updated note"`
 }

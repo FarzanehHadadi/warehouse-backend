@@ -105,6 +105,7 @@ func (r *Router) setupRoutes() {
 		protectedProducts := products.Group("/", middleware.JwtAuth())
 		{
 			protectedProducts.POST("/", r.handler.HandlePostProduct)
+			protectedProducts.GET("/search", r.handler.HandleSearchProductList)
 			withIdProducts := protectedProducts.Group("/:id", middleware.IDMiddleware())
 			{
 				withIdProducts.GET("/", r.handler.HandleGetProduct)
@@ -135,6 +136,7 @@ func (r *Router) setupRoutes() {
 		protectedOrders := orders.Group("/", middleware.JwtAuth())
 		{
 			protectedOrders.POST("/", r.handler.HandlePostOrder)
+			protectedOrders.GET("/export", r.handler.HandleExportOrder)
 			withIdOrders := protectedOrders.Group("/:id", middleware.IDMiddleware())
 			{
 				withIdOrders.GET("/", r.handler.HandleGetOrder)

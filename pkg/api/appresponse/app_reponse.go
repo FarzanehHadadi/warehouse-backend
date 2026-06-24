@@ -1,7 +1,9 @@
 package appresponse
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 	"warehouse/pkg/api/apperr"
 	"warehouse/pkg/api/filter"
 
@@ -86,4 +88,14 @@ func (r *Response) UnauthorizedErr(c *gin.Context, message string) {
 }
 func (r *Response) ForbiddenErr(c *gin.Context, message string) {
 	r.Error(c, apperr.ForbiddenError(message))
+}
+
+func (r *Response) ExcelResponse(c *gin.Context, filename string, data []byte) {
+	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, filename))
+	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	c.Data(http.StatusOK, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data)
+}
+
+func ExportFilename(prefix string) string {
+	return fmt.Sprintf("%s_%s.xlsx", prefix, time.Now().Format("2006-01-02"))
 }

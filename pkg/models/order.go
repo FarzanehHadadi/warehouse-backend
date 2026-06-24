@@ -3,7 +3,6 @@ package models
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 )
 
 type OrderType string
@@ -90,7 +89,7 @@ type Order struct {
 	Type          OrderType     `json:"type" binding:"required,oneof=inbound outbound" gorm:"type:varchar(20);not null"`
 	Quantity      int           `json:"quantity" binding:"required,min=1" gorm:"not null"`
 	Price         int           `json:"price" binding:"required,min=0" gorm:"not null"`
-	ExpireDate    time.Time     `json:"expire_date" binding:"required" gorm:"not null"`
+	ExpireDate    Date          `json:"expire_date" binding:"required" gorm:"type:date;not null"`
 	ProductStatus ProductStatus `json:"product_status" binding:"required,oneof=good defective unknown" gorm:"type:varchar(20);not null"`
 	DepartmentID  uint          `json:"department_id" binding:"required" gorm:"not null;index"`
 	Department    *Department   `json:"department,omitempty" gorm:"foreignKey:DepartmentID"`
@@ -104,7 +103,7 @@ type OrderUpdate struct {
 	Type          *OrderType     `json:"type" binding:"omitempty,oneof=inbound outbound"`
 	Quantity      *int           `json:"quantity" binding:"omitempty,min=1"`
 	Price         *int           `json:"price" binding:"omitempty,min=0"`
-	ExpireDate    *time.Time     `json:"expire_date" binding:"omitempty"`
+	ExpireDate    *Date          `json:"expire_date" binding:"omitempty" gorm:"type:date"`
 	ProductStatus *ProductStatus `json:"product_status" binding:"omitempty,oneof=good defective unknown"`
 	Description   *string        `json:"description" binding:"omitempty"`
 }

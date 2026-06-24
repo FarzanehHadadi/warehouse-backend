@@ -113,3 +113,24 @@ func (or *orderRepository) Update(orderId uint, order *models.OrderUpdate) error
 	}
 	return nil
 }
+
+func (or *orderRepository) GetListNoPagination(req filter.Request) ([]*models.Order, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), databaseTimeout)
+	defer cancel()
+	query := or.db.WithContext(ctx).Model(&models.Order{})
+	query, err := filter.Apply(query, req, filter.OrderFilterConfig)
+	if err != nil {
+		logger.Log.Error(err.Error())
+		return nil, err
+	}
+	query = query.Order("created_at DESC, id DESC")
+	query = query.Preload("Store")
+	query = query.Preload("Department")
+	query = query.Preload("Product")
+	var orders []*models.Order
+	if err := query.Find(&orders).Error; err != nil {
+		logger.Log.Error(err.Error())
+		return nil, err
+	}
+	return orders, nil
+}
