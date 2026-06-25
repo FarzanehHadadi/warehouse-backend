@@ -93,7 +93,7 @@ type Order struct {
 	ProductStatus ProductStatus `json:"product_status" binding:"required,oneof=good defective unknown" gorm:"type:varchar(20);not null"`
 	DepartmentID  uint          `json:"department_id" binding:"required" gorm:"not null;index"`
 	Department    *Department   `json:"department,omitempty" gorm:"foreignKey:DepartmentID"`
-	Description   string        `json:"description" binding:"required" gorm:"not null"`
+	Description   *string       `json:"description" binding:"omitempty"`
 }
 
 type OrderUpdate struct {

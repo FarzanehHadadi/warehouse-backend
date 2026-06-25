@@ -13,7 +13,7 @@ type OrderSummary struct {
 	Product       *SimpleSummary       `json:"product,omitempty"`
 	Store         *SimpleSummary       `json:"store,omitempty"`
 	Department    *SimpleSummary       `json:"department,omitempty"`
-	Description   string               `json:"description" example:"Stock intake"`
+	Description   *string              `json:"description" example:"Stock intake"`
 	Quantity      int                  `json:"quantity" example:"10"`
 	Price         int                  `json:"price" example:"1000"`
 	ExpireDate    models.Date          `json:"expire_date" swaggertype:"string" format:"date" example:"2026-12-31"`
@@ -40,7 +40,7 @@ type CreateOrderRequest struct {
 	Price         int                  `json:"price" binding:"required,min=0" example:"1000"`
 	ExpireDate    models.Date          `json:"expire_date" binding:"required" swaggertype:"string" format:"date" example:"2026-12-31"`
 	ProductStatus models.ProductStatus `json:"product_status" binding:"required,oneof=good defective unknown" enums:"good,defective,unknown" example:"good"`
-	Description   string               `json:"description" binding:"required" example:"Stock intake"`
+	Description   *string              `json:"description" binding:"omitempty" example:"Stock intake"`
 }
 
 type UpdateOrderRequest struct {

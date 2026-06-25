@@ -91,13 +91,13 @@ func (h *Handler) HandlePostOrder(c *gin.Context) {
 		h.Response.BadRequestErr(c, err.Error())
 		return
 	}
-	ord, err := h.Repository.Order.Create(mapper.ToOrderFromCreateRequest(&req))
+	err := h.Repository.Order.Create(mapper.ToOrderFromCreateRequest(&req))
 	if err != nil {
 		logger.Log.Error("error creating order", zap.Error(err))
 		h.handleError(c, err, "Order")
 		return
 	}
-	h.Response.CreatedResponse(c, mapper.ToOrderDetailResponse(ord))
+	h.Response.CreatedResponse(c, "")
 }
 
 // HandlePatchOrder godoc
@@ -213,4 +213,3 @@ func (h *Handler) HandleExportOrder(c *gin.Context) {
 	}
 
 }
-

@@ -44,13 +44,13 @@ type FieldFilterConfig struct {
 	Operator   Operator  // eq | ne | gt | gte | lt | lte | like | in
 }
 
-type Config struct {
+type FilterConfig struct {
 	Filters        []FieldFilterConfig
 	SearchFields   []string
 	SortableFields map[string]bool
 }
 
-func (cfg Config) FieldTypes() map[string]FieldType {
+func (cfg FilterConfig) FieldTypes() map[string]FieldType {
 	types := make(map[string]FieldType, len(cfg.Filters))
 	for _, f := range cfg.Filters {
 		types[f.Field] = f.Type

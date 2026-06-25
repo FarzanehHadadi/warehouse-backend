@@ -64,7 +64,7 @@ func (h *Handler) HandlePostDepartment(c *gin.Context) {
 		return
 	}
 
-	dep, err := h.Repository.Department.Create(department)
+	err := h.Repository.Department.Create(department)
 	if err != nil {
 		if errors.Is(err, repository.ErrDuplicateKey) {
 			h.Response.ConflictErr(c, err.Error())
@@ -74,7 +74,7 @@ func (h *Handler) HandlePostDepartment(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.CreatedResponse(c, dep)
+	h.Response.CreatedResponse(c, "")
 }
 
 // HandlePatchDepartment godoc

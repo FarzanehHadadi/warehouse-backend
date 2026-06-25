@@ -2483,7 +2483,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "department_id",
-                "description",
                 "expire_date",
                 "price",
                 "product_id",

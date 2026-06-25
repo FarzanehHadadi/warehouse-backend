@@ -62,7 +62,7 @@ func (h *Handler) HandlePostCategory(c *gin.Context) {
 		h.Response.BadRequestErr(c, err.Error())
 		return
 	}
-	cat, err := h.Repository.Category.Create(cat)
+	err := h.Repository.Category.Create(cat)
 	if err != nil {
 		switch err {
 		case repository.ErrDuplicateKey:
@@ -73,7 +73,7 @@ func (h *Handler) HandlePostCategory(c *gin.Context) {
 		return
 	}
 
-	h.Response.CreatedResponse(c, cat)
+	h.Response.CreatedResponse(c, "")
 
 }
 

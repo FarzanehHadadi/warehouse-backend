@@ -10,7 +10,7 @@ import (
 func ApplyCursor(
 	query *gorm.DB,
 	req Request,
-	cfg Config,
+	cfg FilterConfig,
 ) (*gorm.DB, error) {
 
 	limit := req.Limit

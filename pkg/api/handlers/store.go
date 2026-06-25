@@ -85,12 +85,12 @@ func (h *Handler) HandlePostStore(c *gin.Context) {
 		h.handleError(c, err, "Store")
 		return
 	}
-	str, err := h.Repository.Store.Create(store)
+	err := h.Repository.Store.Create(store)
 	if err != nil {
 		h.handleError(c, err, "Store")
 		return
 	}
-	h.Response.CreatedResponse(c, mapper.ToStoreDetailResponse(str))
+	h.Response.CreatedResponse(c, "")
 }
 
 // HandlePatchStore godoc

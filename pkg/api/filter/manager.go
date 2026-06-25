@@ -1,6 +1,6 @@
 package filter
 
-var ManagerFilterConfig = Config{
+var ManagerFilterConfig = FilterConfig{
 	Filters: []FieldFilterConfig{
 		{QueryParam: "id", Field: "id", Type: UIntType, Operator: Eq},
 		{QueryParam: "name", Field: "name", Type: StringType, Operator: Like},

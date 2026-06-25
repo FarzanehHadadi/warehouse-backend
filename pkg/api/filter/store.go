@@ -1,6 +1,6 @@
 package filter
 
-var StoreFilterConfig = Config{
+var StoreFilterConfig = FilterConfig{
 	Filters: []FieldFilterConfig{
 		{QueryParam: "name", Field: "name", Type: StringType, Operator: Like},
 		{QueryParam: "manager_name", Field: "manager_name", Type: StringType, Operator: Like},

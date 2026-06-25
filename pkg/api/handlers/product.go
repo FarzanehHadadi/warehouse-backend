@@ -87,12 +87,12 @@ func (h *Handler) HandlePostProduct(c *gin.Context) {
 		h.handleError(c, err, "Product")
 		return
 	}
-	prd, err := h.Repository.Product.Create(product)
+	err := h.Repository.Product.Create(product)
 	if err != nil {
 		h.handleError(c, err, "Product")
 		return
 	}
-	h.Response.CreatedResponse(c, prd)
+	h.Response.CreatedResponse(c, "")
 }
 
 // HandlePatchProduct godoc

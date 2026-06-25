@@ -99,7 +99,7 @@ func (h *Handler) HandlePostUnit(c *gin.Context) {
 		h.Response.BadRequestErr(c, err.Error())
 		return
 	}
-	unitDb, err := h.Repository.Unit.Create(unit)
+	err := h.Repository.Unit.Create(unit)
 	if err != nil {
 		switch err {
 		case repository.ErrDuplicateKey:
@@ -110,7 +110,7 @@ func (h *Handler) HandlePostUnit(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.CreatedResponse(c, unitDb)
+	h.Response.CreatedResponse(c, "")
 
 }
 

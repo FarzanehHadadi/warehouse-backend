@@ -58,13 +58,13 @@ func (h *Handler) HandlePostManager(c *gin.Context) {
 		return
 	}
 
-	dep, err := h.Repository.Manager.Create(manager)
+	err := h.Repository.Manager.Create(manager)
 	if err != nil {
 		h.handleError(c, err, "Manager")
 
 		return
 	}
-	h.Response.CreatedResponse(c, dep)
+	h.Response.CreatedResponse(c, "")
 }
 
 // HandlePatchManager godoc

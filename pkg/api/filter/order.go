@@ -1,6 +1,6 @@
 package filter
 
-var OrderFilterConfig = Config{
+var OrderFilterConfig = FilterConfig{
 	Filters: []FieldFilterConfig{
 		{QueryParam: "product_id", Field: "product_id", Type: UIntType, Operator: Eq},
 		{QueryParam: "store_id", Field: "store_id", Type: UIntType, Operator: Eq},

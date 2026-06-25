@@ -17,7 +17,7 @@ var reservedQueryParams = map[string]struct{}{
 	"cursor":     {},
 }
 
-func NewPaginationRequestFromConfig(c *gin.Context, cfg filter.Config) *filter.Request {
+func NewPaginationRequestFromConfig(c *gin.Context, cfg filter.FilterConfig) *filter.Request {
 	req := &filter.Request{
 		Limit:  20,
 		SortBy: "created_at",
@@ -56,7 +56,7 @@ func Normalize(r *filter.Request) *filter.Request {
 	return r
 }
 
-func parseFieldFiltersFromConfig(c *gin.Context, r *filter.Request, cfg filter.Config) *filter.Request {
+func parseFieldFiltersFromConfig(c *gin.Context, r *filter.Request, cfg filter.FilterConfig) *filter.Request {
 	for _, fc := range cfg.Filters {
 
 		if _, reserved := reservedQueryParams[fc.QueryParam]; reserved {

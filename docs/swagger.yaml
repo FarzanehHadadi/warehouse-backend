@@ -68,7 +68,6 @@ definitions:
         example: inbound
     required:
     - department_id
-    - description
     - expire_date
     - price
     - product_id

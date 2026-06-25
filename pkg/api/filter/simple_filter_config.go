@@ -1,6 +1,6 @@
 package filter
 
-var SimpleFilterConfig = Config{
+var SimpleFilterConfig = FilterConfig{
 	Filters: []FieldFilterConfig{
 		{QueryParam: "name", Field: "name", Type: StringType, Operator: Like},
 		{QueryParam: "created_after", Field: "created_at", Type: TimeType, Operator: Gt},

@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Apply(query *gorm.DB, req Request, cfg Config) (*gorm.DB, error) {
+func Apply(query *gorm.DB, req Request, cfg FilterConfig) (*gorm.DB, error) {
 	allowedFields := cfg.FieldTypes()
 
 	for _, cond := range req.Filters {
