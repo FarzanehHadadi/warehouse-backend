@@ -50,8 +50,7 @@ func (or *orderRepository) GetList(req filter.Request) ([]*models.Order, *filter
 	defer cancel()
 
 	query := or.db.WithContext(ctx).Model(&models.Order{})
-	query, err := filter.Apply(query, req, filter.OrderFilterConfig)
-
+	query, err := or.buildOrderQuery(ctx, req)
 	if err != nil {
 		logger.Log.Error(err.Error())
 		return nil, nil, err
@@ -62,9 +61,6 @@ func (or *orderRepository) GetList(req filter.Request) ([]*models.Order, *filter
 		return nil, nil, err
 	}
 
-	query = query.Preload("Store")
-	query = query.Preload("Department")
-	query = query.Preload("Product")
 	var orders []*models.Order
 	if err := query.Find(&orders).Error; err != nil {
 		logger.Log.Error(err.Error())
@@ -118,19 +114,31 @@ func (or *orderRepository) GetListNoPagination(req filter.Request) ([]*models.Or
 	ctx, cancel := context.WithTimeout(context.Background(), databaseTimeout)
 	defer cancel()
 	query := or.db.WithContext(ctx).Model(&models.Order{})
-	query, err := filter.Apply(query, req, filter.OrderFilterConfig)
+	query, err := or.buildOrderQuery(ctx, req)
 	if err != nil {
 		logger.Log.Error(err.Error())
 		return nil, err
 	}
+
 	query = query.Order("created_at DESC, id DESC")
-	query = query.Preload("Store")
-	query = query.Preload("Department")
-	query = query.Preload("Product")
 	var orders []*models.Order
 	if err := query.Find(&orders).Error; err != nil {
 		logger.Log.Error(err.Error())
 		return nil, err
 	}
 	return orders, nil
+}
+func (or *orderRepository) buildOrderQuery(ctx context.Context, req filter.Request) (*gorm.DB, error) {
+	query := or.db.WithContext(ctx).Model(&models.Order{})
+
+	query, err := filter.Apply(query, req, filter.OrderFilterConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	query = query.Preload("Store").
+		Preload("Department").
+		Preload("Product")
+
+	return query, nil
 }
