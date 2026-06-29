@@ -15,7 +15,7 @@ type Activity struct {
 	CreatedAt   time.Time   `json:"created_at"`
 }
 type UserSummary struct {
-	ID       uint   `json:"id"`
-	Phone    string `json:"phone"`
-	Username string `json:"username"`
+	Phone     string `json:"phone"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
 }

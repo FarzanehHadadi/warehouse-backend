@@ -29,6 +29,11 @@ import (
 // @name X-API-Key
 // @description Enter your API Key here
 
+// @securityDefinitions.apikey AdminRegistrationKeyAuth
+// @in header
+// @name X-Admin-Key
+// @description Enter your Admin Registration Key here
+
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization

@@ -12,8 +12,8 @@ type Product struct {
 }
 
 type ProductUpdate struct {
-	Name             string `json:"name" binding:"required,min=3,max=100"`
-	WarningThreshold int    `json:"warning_threshold" binding:"required,min=1" `
-	CategoryID       uint   `json:"category_id" binding:"required"`
-	UnitID           uint   `json:"unit_id" binding:"required"`
+	Name             *string `json:"name" binding:"omitempty,min=3,max=100"`
+	WarningThreshold *int    `json:"warning_threshold" binding:"omitempty,min=1" `
+	CategoryID       *uint   `json:"category_id" binding:"omitempty"`
+	UnitID           *uint   `json:"unit_id" binding:"omitempty"`
 }

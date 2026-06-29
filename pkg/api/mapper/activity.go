@@ -7,9 +7,9 @@ import (
 
 func ToUserSummary(user *models.User) dto.UserSummary {
 	return dto.UserSummary{
-		ID:       user.ID,
-		Phone:    user.Phone,
-		Username: user.Username,
+		Phone:     user.Phone,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
 	}
 }
 func ToActivitySummary(activity *models.Activity) dto.Activity {

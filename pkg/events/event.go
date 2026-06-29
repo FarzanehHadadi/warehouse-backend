@@ -27,6 +27,7 @@ const (
 	Store      EntityType = "store"
 	Order      EntityType = "order"
 	Category   EntityType = "category"
+	User       EntityType = "user"
 )
 
 type Event struct {

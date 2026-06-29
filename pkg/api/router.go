@@ -36,7 +36,11 @@ func (r *Router) setupRoutes() {
 	auth := v1.Group("/auth")
 	{
 		auth.POST("/login", r.handler.HandleLogin)
+		adminAuth := auth.Use(middleware.AdminRegistrationKeyAuth())
+		{
+			adminAuth.POST("/register", r.handler.HandlePostRegister)
 
+		}
 	}
 
 	categories := v1.Group("/categories")

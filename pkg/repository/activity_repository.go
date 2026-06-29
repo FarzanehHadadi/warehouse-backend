@@ -49,7 +49,7 @@ func (r *activityRepository) GetRecent(limit int) ([]models.Activity, error) {
 	var activities []models.Activity
 
 	err := r.db.Preload("User", func(db *gorm.DB) *gorm.DB {
-		return db.Select("id, phone, username")
+		return db.Select("id, phone, first_name, last_name")
 	}).
 		Order("created_at DESC").
 		Limit(limit).

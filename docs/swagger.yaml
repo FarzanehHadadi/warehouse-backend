@@ -286,6 +286,8 @@ definitions:
     properties:
       token:
         type: string
+      user:
+        $ref: '#/definitions/dto.UserLoginSummary'
     type: object
   dto.SuccessCategoriesResponse:
     properties:
@@ -414,13 +416,26 @@ definitions:
     - mobile
     - password
     type: object
-  dto.UserSummary:
+  dto.UserLoginSummary:
     properties:
-      id:
-        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
       phone:
         type: string
       username:
+        type: string
+    type: object
+  dto.UserSummary:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      phone:
         type: string
     type: object
   dto.orderListResponse:
@@ -484,6 +499,21 @@ definitions:
         type: string
     required:
     - name
+    type: object
+  models.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      user_name:
+        type: string
     type: object
   models.DashboardStats:
     properties:
@@ -570,11 +600,6 @@ definitions:
       warning_threshold:
         minimum: 1
         type: integer
-    required:
-    - category_id
-    - name
-    - unit_id
-    - warning_threshold
     type: object
   models.StoreProductQuantityReport:
     properties:
@@ -687,6 +712,41 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Login
+      tags:
+      - Auth
+  /v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: enter your phone number and password to register
+        in: body
+        name: registerInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content - User created successfully
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - AdminRegistrationKeyAuth: []
+      summary: Register
       tags:
       - Auth
   /v1/categories:
@@ -2474,6 +2534,11 @@ paths:
       tags:
       - Units
 securityDefinitions:
+  AdminRegistrationKeyAuth:
+    description: Enter your Admin Registration Key here
+    in: header
+    name: X-Admin-Key
+    type: apiKey
   ApiKeyAuth:
     description: Enter your API Key here
     in: header

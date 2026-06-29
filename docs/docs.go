@@ -72,6 +72,63 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/register": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "AdminRegistrationKeyAuth": []
+                    }
+                ],
+                "description": "Register a new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register",
+                "parameters": [
+                    {
+                        "description": "enter your phone number and password to register",
+                        "name": "registerInfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No Content - User created successfully"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/categories": {
             "get": {
                 "security": [
@@ -3283,6 +3340,9 @@ const docTemplate = `{
             "properties": {
                 "token": {
                     "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserLoginSummary"
                 }
             }
         },
@@ -3472,16 +3532,36 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UserSummary": {
+        "dto.UserLoginSummary": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer"
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
                 },
                 "phone": {
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UserSummary": {
+            "type": "object",
+            "properties": {
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 }
             }
@@ -3572,6 +3652,29 @@ const docTemplate = `{
                     "minLength": 3
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CreateUserRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "user_name": {
                     "type": "string"
                 }
             }
@@ -3681,12 +3784,6 @@ const docTemplate = `{
         },
         "models.ProductUpdate": {
             "type": "object",
-            "required": [
-                "category_id",
-                "name",
-                "unit_id",
-                "warning_threshold"
-            ],
             "properties": {
                 "category_id": {
                     "type": "integer"
@@ -3806,6 +3903,12 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
+        "AdminRegistrationKeyAuth": {
+            "description": "Enter your Admin Registration Key here",
+            "type": "apiKey",
+            "name": "X-Admin-Key",
+            "in": "header"
+        },
         "ApiKeyAuth": {
             "description": "Enter your API Key here",
             "type": "apiKey",
