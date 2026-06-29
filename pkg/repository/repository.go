@@ -27,6 +27,7 @@ func NewRepository(db *gorm.DB) *Repository {
 		Order:      NewOrderRepository(db),
 		Report:     NewReportRepository(db),
 		Activity:   NewActivityRepository(db),
+		Dashboard:  NewDashboardRepository(db),
 	}
 }
 func isDuplicateKeyError(err error) bool {

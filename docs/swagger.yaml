@@ -485,6 +485,17 @@ definitions:
     required:
     - name
     type: object
+  models.DashboardStats:
+    properties:
+      active_stores:
+        type: integer
+      stores_threshold:
+        type: integer
+      today_orders:
+        type: integer
+      total_products:
+        type: integer
+    type: object
   models.Department:
     properties:
       created_at:
@@ -879,6 +890,28 @@ paths:
       summary: Modify a category
       tags:
       - Categories
+  /v1/dashboard:
+    get:
+      consumes:
+      - application/json
+      description: Get dashboard
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DashboardStats'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Get dashboard
+      tags:
+      - Dashboard
   /v1/dashboard/activities:
     get:
       consumes:

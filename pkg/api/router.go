@@ -159,6 +159,7 @@ func (r *Router) setupRoutes() {
 	}
 	dashboard := v1.Group("/dashboard")
 	protectedDashboard := dashboard.Group("/", middleware.JwtAuth())
+	protectedDashboard.GET("/", r.handler.HandleGetDashboard)
 	{
 		protectedDashboard.GET("/activities", r.handler.HandleGetRecentActivities)
 	}

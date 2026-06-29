@@ -73,6 +73,9 @@ type ActivityRepository interface {
 	Log(userID uint, action, entityType string, entityID uint, description string, payload interface{}) error
 	GetRecent(limit int) ([]models.Activity, error)
 }
+type DashboardRepository interface {
+	GetStats() (*models.DashboardStats, error)
+}
 
 // Repository holds all repositories
 type Repository struct {
@@ -86,4 +89,5 @@ type Repository struct {
 	Order      OrderRepository
 	Report     ReportRepository
 	Activity   ActivityRepository
+	Dashboard  DashboardRepository
 }

@@ -389,6 +389,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/dashboard": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get dashboard",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Get dashboard",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DashboardStats"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/dashboard/activities": {
             "get": {
                 "security": [
@@ -3536,6 +3573,23 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "models.DashboardStats": {
+            "type": "object",
+            "properties": {
+                "active_stores": {
+                    "type": "integer"
+                },
+                "stores_threshold": {
+                    "type": "integer"
+                },
+                "today_orders": {
+                    "type": "integer"
+                },
+                "total_products": {
+                    "type": "integer"
                 }
             }
         },
