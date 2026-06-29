@@ -75,7 +75,7 @@ func (h *Handler) HandlePostCategory(c *gin.Context) {
 		return
 	}
 
-	h.Response.CreatedResponse(c, "", "Category", cat.ID, "Category created successfully", cat)
+	h.Response.CreatedResponse(c, "", events.Category, cat.ID, "Category created successfully", cat)
 
 }
 
@@ -109,7 +109,7 @@ func (h *Handler) HandleDeleteCategory(c *gin.Context) {
 		return
 
 	}
-	h.Response.NoContentResponse(c, events.Deleted, "Category", uint(id), "Category deleted successfully", nil)
+	h.Response.NoContentResponse(c, events.Deleted, events.Category, uint(id), "Category deleted successfully", nil)
 
 }
 
@@ -150,7 +150,7 @@ func (h *Handler) HandlePatchCategory(c *gin.Context) {
 		return
 	}
 
-	h.Response.NoContentResponse(c, events.Updated, "Category", uint(id), "Category updated successfully", cat)
+	h.Response.NoContentResponse(c, events.Updated, events.Category, uint(id), "Category updated successfully", cat)
 
 }
 

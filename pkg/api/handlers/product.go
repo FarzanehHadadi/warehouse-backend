@@ -94,7 +94,7 @@ func (h *Handler) HandlePostProduct(c *gin.Context) {
 		h.handleError(c, err, "Product")
 		return
 	}
-	h.Response.CreatedResponse(c, "", "Product", product.ID, "Product created successfully", product)
+	h.Response.CreatedResponse(c, "", events.Product, product.ID, "Product created successfully", product)
 }
 
 // HandlePatchProduct godoc
@@ -126,7 +126,7 @@ func (h *Handler) HandlePatchProduct(c *gin.Context) {
 		h.handleError(c, err, "product")
 		return
 	}
-	h.Response.NoContentResponse(c, events.Updated, "Product", uint(id), "Product updated successfully", product)
+	h.Response.NoContentResponse(c, events.Updated, events.Product, uint(id), "Product updated successfully", product)
 }
 
 // HandleDeleteProduct godoc
@@ -152,7 +152,7 @@ func (h *Handler) HandleDeleteProduct(c *gin.Context) {
 		h.handleError(c, err, "Product")
 		return
 	}
-	h.Response.NoContentResponse(c, events.Deleted, "Product", uint(id), "Product deleted successfully", nil)
+	h.Response.NoContentResponse(c, events.Deleted, events.Product, uint(id), "Product deleted successfully", nil)
 }
 
 // @Summary      Search in products

@@ -66,7 +66,7 @@ func (h *Handler) HandlePostManager(c *gin.Context) {
 
 		return
 	}
-	h.Response.CreatedResponse(c, "", "Manager", manager.ID, "Manager created successfully", manager)
+	h.Response.CreatedResponse(c, "", events.Manager, manager.ID, "Manager created successfully", manager)
 }
 
 // HandlePatchManager godoc
@@ -98,7 +98,7 @@ func (h *Handler) HandlePatchManager(c *gin.Context) {
 		h.handleError(c, err, "Manager")
 		return
 	}
-	h.Response.NoContentResponse(c, events.Updated, "Manager", uint(id), "Manager updated successfully", dep)
+	h.Response.NoContentResponse(c, events.Updated, events.Manager, uint(id), "Manager updated successfully", dep)
 
 }
 
@@ -125,7 +125,7 @@ func (h *Handler) HandleDeleteManager(c *gin.Context) {
 		h.handleError(c, err, "Manager")
 		return
 	}
-	h.Response.NoContentResponse(c, events.Deleted, "Manager", uint(id), "Manager deleted successfully", nil)
+	h.Response.NoContentResponse(c, events.Deleted, events.Manager, uint(id), "Manager deleted successfully", nil)
 
 }
 

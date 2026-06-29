@@ -99,7 +99,7 @@ func (h *Handler) HandlePostOrder(c *gin.Context) {
 		h.handleError(c, err, "Order")
 		return
 	}
-	h.Response.CreatedResponse(c, "", "Order", 0, "Order created successfully", req)
+	h.Response.CreatedResponse(c, "", events.Order, 0, "Order created successfully", req)
 }
 
 // HandlePatchOrder godoc
@@ -133,7 +133,7 @@ func (h *Handler) HandlePatchOrder(c *gin.Context) {
 		return
 
 	}
-	h.Response.NoContentResponse(c, events.Updated, "Order", uint(id), "Order updated successfully", req)
+	h.Response.NoContentResponse(c, events.Updated, events.Order, uint(id), "Order updated successfully", req)
 }
 
 // HandleDeleteOrder godoc
@@ -161,7 +161,7 @@ func (h *Handler) HandleDeleteOrder(c *gin.Context) {
 		return
 
 	}
-	h.Response.NoContentResponse(c, events.Deleted, "Order", uint(id), "Order deleted successfully", nil)
+	h.Response.NoContentResponse(c, events.Deleted, events.Order, uint(id), "Order deleted successfully", nil)
 }
 
 // HandleExportOrder godoc

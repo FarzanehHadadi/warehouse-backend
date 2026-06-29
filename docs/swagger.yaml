@@ -1,5 +1,22 @@
 basePath: /v1
 definitions:
+  dto.Activity:
+    properties:
+      action:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      entity_id:
+        type: integer
+      entity_type:
+        type: string
+      id:
+        type: integer
+      user:
+        $ref: '#/definitions/dto.UserSummary'
+    type: object
   dto.Category:
     properties:
       name:
@@ -258,6 +275,13 @@ definitions:
         example: Store 1
         type: string
     type: object
+  dto.SuccessActivityResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.Activity'
+        type: array
+    type: object
   dto.SuccessAuthResponse:
     properties:
       token:
@@ -389,6 +413,15 @@ definitions:
     required:
     - mobile
     - password
+    type: object
+  dto.UserSummary:
+    properties:
+      id:
+        type: integer
+      phone:
+        type: string
+      username:
+        type: string
     type: object
   dto.orderListResponse:
     properties:
@@ -846,6 +879,28 @@ paths:
       summary: Modify a category
       tags:
       - Categories
+  /v1/dashboard/activities:
+    get:
+      consumes:
+      - application/json
+      description: Get recent activities
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessActivityResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Get recent activities
+      tags:
+      - Dashboard
   /v1/departments:
     get:
       consumes:

@@ -24,7 +24,7 @@ func (l *ActivityLogger) Handle(event events.Event) {
 	err := l.ActivityRepo.Log(
 		event.UserID,
 		string(event.Action),
-		event.EntityType,
+		string(event.EntityType),
 		event.EntityID,
 		event.Description,
 		event.Metadata,

@@ -112,7 +112,7 @@ func (h *Handler) HandlePostUnit(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.CreatedResponse(c, "", "Unit", unit.ID, "Unit created successfully", unit)
+	h.Response.CreatedResponse(c, "", events.Unit, unit.ID, "Unit created successfully", unit)
 
 }
 
@@ -144,7 +144,7 @@ func (h *Handler) HandleDeleteUnit(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.NoContentResponse(c, events.Deleted, "Unit", uint(id), "Unit deleted successfully", nil)
+	h.Response.NoContentResponse(c, events.Deleted, events.Unit, uint(id), "Unit deleted successfully", nil)
 }
 
 // HandlePatchUnit godoc
@@ -183,5 +183,5 @@ func (h *Handler) HandlePatchUnit(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.NoContentResponse(c, events.Updated, "Unit", uint(id), "Unit updated successfully", unit)
+	h.Response.NoContentResponse(c, events.Updated, events.Unit, uint(id), "Unit updated successfully", unit)
 }

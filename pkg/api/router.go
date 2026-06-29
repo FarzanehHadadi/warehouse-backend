@@ -157,5 +157,9 @@ func (r *Router) setupRoutes() {
 			protectedReports.GET("/store-product-quantities/", r.handler.HandleGetStoreProductQuantitiesReport)
 		}
 	}
-
+	dashboard := v1.Group("/dashboard")
+	protectedDashboard := dashboard.Group("/", middleware.JwtAuth())
+	{
+		protectedDashboard.GET("/activities", r.handler.HandleGetRecentActivities)
+	}
 }

@@ -76,7 +76,7 @@ func (h *Handler) HandlePostDepartment(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.CreatedResponse(c, "", "Department", department.ID, "Department created successfully", department)
+	h.Response.CreatedResponse(c, "", events.Department, department.ID, "Department created successfully", department)
 }
 
 // HandlePatchDepartment godoc
@@ -114,7 +114,7 @@ func (h *Handler) HandlePatchDepartment(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.NoContentResponse(c, events.Updated, "Department", uint(id), "Department updated successfully", dep)
+	h.Response.NoContentResponse(c, events.Updated, events.Department, uint(id), "Department updated successfully", dep)
 
 }
 
@@ -147,7 +147,7 @@ func (h *Handler) HandleDeleteDepartment(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.NoContentResponse(c, events.Deleted, "Department", uint(id), "Department deleted successfully", nil)
+	h.Response.NoContentResponse(c, events.Deleted, events.Department, uint(id), "Department deleted successfully", nil)
 
 }
 

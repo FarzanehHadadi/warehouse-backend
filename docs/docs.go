@@ -389,6 +389,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/dashboard/activities": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get recent activities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Get recent activities",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.SuccessActivityResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/departments": {
             "get": {
                 "security": [
@@ -2798,6 +2835,32 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.Activity": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "entity_id": {
+                    "type": "integer"
+                },
+                "entity_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserSummary"
+                }
+            }
+        },
         "dto.Category": {
             "type": "object",
             "required": [
@@ -3167,6 +3230,17 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.SuccessActivityResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Activity"
+                    }
+                }
+            }
+        },
         "dto.SuccessAuthResponse": {
             "type": "object",
             "properties": {
@@ -3358,6 +3432,20 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 72,
                     "minLength": 3
+                }
+            }
+        },
+        "dto.UserSummary": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },

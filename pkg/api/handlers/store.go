@@ -92,7 +92,7 @@ func (h *Handler) HandlePostStore(c *gin.Context) {
 		h.handleError(c, err, "Store")
 		return
 	}
-	h.Response.CreatedResponse(c, "", "Store", store.ID, "Store created successfully", store)
+	h.Response.CreatedResponse(c, "", events.Store, store.ID, "Store created successfully", store)
 }
 
 // HandlePatchStore godoc
@@ -126,7 +126,7 @@ func (h *Handler) HandlePatchStore(c *gin.Context) {
 		return
 
 	}
-	h.Response.NoContentResponse(c, events.Updated, "Store", uint(id), "Store updated successfully", store)
+	h.Response.NoContentResponse(c, events.Updated, events.Store, uint(id), "Store updated successfully", store)
 }
 
 // HandleDeleteStore godoc
@@ -154,5 +154,5 @@ func (h *Handler) HandleDeleteStore(c *gin.Context) {
 		return
 
 	}
-	h.Response.NoContentResponse(c, events.Deleted, "Store", uint(id), "Store deleted successfully", nil)
+	h.Response.NoContentResponse(c, events.Deleted, events.Store, uint(id), "Store deleted successfully", nil)
 }
