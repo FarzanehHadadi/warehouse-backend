@@ -5,8 +5,9 @@ type UserDto struct {
 	Password string `json:"password" binding:"required,min=3,max=72"`
 }
 type SuccessAuthResponse struct {
-	Token string           `json:"token"`
-	User  UserLoginSummary `json:"user"`
+	Token        string           `json:"token"`
+	RefreshToken string           `json:"refresh_token"`
+	User         UserLoginSummary `json:"user"`
 }
 
 type UserLoginSummary struct {
@@ -15,4 +16,12 @@ type UserLoginSummary struct {
 	Email     string `json:"email"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
+}
+
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token" binding:"required"`
+}
+type RefreshTokenResponse struct {
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
 }

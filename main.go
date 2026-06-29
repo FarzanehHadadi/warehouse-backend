@@ -57,7 +57,8 @@ func main() {
 	repo := repository.NewRepository(db)
 	setupEventListeners(repo)
 	jwtSecretKey := os.Getenv("JWT_SECRET_KEY")
-	auth.LoadSecretKey([]byte(jwtSecretKey))
+	refreshSecretKey := os.Getenv("REFRESH_SECRET_KEY")
+	auth.LoadSecrets([]byte(jwtSecretKey), []byte(refreshSecretKey))
 	// API Router with handler
 	router := api.NewRouter(repo)
 

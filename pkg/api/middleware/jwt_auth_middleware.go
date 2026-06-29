@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
 	"warehouse/pkg/api/auth"
 
 	"github.com/gin-gonic/gin"
@@ -20,10 +21,19 @@ func JwtAuth() gin.HandlerFunc {
 			})
 			return
 		}
-		const BearerSchema = "Bearer "
+		const bearerPrefix = "Bearer "
+		if !strings.HasPrefix(authHeader, bearerPrefix) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": gin.H{
+					"code":    "INVALID_TOKEN",
+					"message": "Authorization header must start with Bearer",
+				},
+			})
+			return
+		}
 
-		tokenStr := authHeader[len(BearerSchema):]
-		claims, err := auth.ValidateToken(tokenStr)
+		tokenStr := strings.TrimSpace(strings.TrimPrefix(authHeader, bearerPrefix))
+		claims, err := auth.ValidateToken(tokenStr, auth.TokenTypeAccess)
 		if err != nil {
 
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{

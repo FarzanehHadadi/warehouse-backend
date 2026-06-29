@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"sync"
 	"time"
+	"warehouse/pkg/logger"
 
 	"github.com/golang-jwt/jwt/v5"
+	"go.uber.org/zap"
 )
 
 const MinJWTSecretKeyBytes = 32
@@ -16,30 +18,38 @@ type Claims struct {
 }
 
 var (
-	SecretKey []byte
-	signingMu sync.RWMutex
+	AccessSecretKey  []byte
+	RefreshSecretKey []byte
+	mu               sync.RWMutex
 )
 
-func LoadSecretKey(secret []byte) {
-
-	if len(secret) < MinJWTSecretKeyBytes {
-		panic("Invalid jwt secret key")
+func LoadSecrets(accessKey, refreshKey []byte) {
+	if len(accessKey) < MinJWTSecretKeyBytes || len(refreshKey) < MinJWTSecretKeyBytes {
+		panic("JWT secret keys must be at least 32 bytes")
 	}
-	k := make([]byte, len(secret))
-	copy(k, secret)
-	signingMu.Lock()
-	SecretKey = k
-	signingMu.Unlock()
 
+	mu.Lock()
+	defer mu.Unlock()
+
+	AccessSecretKey = append([]byte{}, accessKey...)
+	RefreshSecretKey = append([]byte{}, refreshKey...)
 }
-func JWtSigningKey() []byte {
-	if len(SecretKey) == 0 {
-		return nil
+func JWtSigningKey(tokenType TokenType) []byte {
+	if tokenType == TokenTypeAccess {
+		if len(AccessSecretKey) == 0 {
+			return nil
+		}
+		mu.RLock()
+		out := make([]byte, len(AccessSecretKey))
+		copy(out, AccessSecretKey)
+		mu.RUnlock()
+		return out
+
 	}
-	signingMu.RLock()
-	out := make([]byte, len(SecretKey))
-	copy(out, SecretKey)
-	signingMu.RUnlock()
+	mu.RLock()
+	out := make([]byte, len(RefreshSecretKey))
+	copy(out, RefreshSecretKey)
+	mu.RUnlock()
 	return out
 
 }
@@ -53,19 +63,35 @@ func JWTSignFunc(key []byte) jwt.Keyfunc {
 	}
 
 }
-func GenerateToken(userId uint) (string, error) {
+
+type TokenType string
+
+const (
+	TokenTypeAccess  TokenType = "access"
+	TokenTypeRefresh TokenType = "refresh"
+)
+const (
+	AccessTokenDuration  = 1 * time.Hour
+	RefreshTokenDuration = 7 * 24 * time.Hour
+)
+
+func GenerateToken(userId uint, tokenType TokenType) (string, error) {
 	if userId == 0 {
 		return "", fmt.Errorf("Invalid user id")
 	}
-	key := JWtSigningKey()
+	key := JWtSigningKey(tokenType)
 	if len(key) < MinJWTSecretKeyBytes {
 		return "", fmt.Errorf("Generated token is not valid")
+	}
+	tokenDuration := AccessTokenDuration
+	if tokenType == TokenTypeRefresh {
+		tokenDuration = RefreshTokenDuration
 	}
 
 	claims := &Claims{
 		UserId: userId,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(80 * 24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(tokenDuration)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 		},
@@ -77,14 +103,18 @@ func GenerateToken(userId uint) (string, error) {
 	}
 	return tokenString, nil
 }
-func ValidateToken(tokenString string) (*Claims, error) {
-	key := JWtSigningKey()
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, JWTSignFunc(key))
-
-	if err != nil {
-		return nil, err
-
+func ValidateToken(tokenString string, tokenType TokenType) (*Claims, error) {
+	key := JWtSigningKey(tokenType)
+	if len(key) < MinJWTSecretKeyBytes {
+		return nil, fmt.Errorf("JWT secret key is not configured")
 	}
+
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, JWTSignFunc(key))
+	if err != nil {
+		logger.Log.Error("ValidateToken", zap.Error(err), zap.String("tokenType", string(tokenType)))
+		return nil, err
+	}
+
 	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
 		return claims, nil
 	}

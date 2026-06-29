@@ -36,6 +36,7 @@ func (r *Router) setupRoutes() {
 	auth := v1.Group("/auth")
 	{
 		auth.POST("/login", r.handler.HandleLogin)
+		auth.POST("/refresh", r.handler.HandleRefreshToken)
 		adminAuth := auth.Use(middleware.AdminRegistrationKeyAuth())
 		{
 			adminAuth.POST("/register", r.handler.HandlePostRegister)

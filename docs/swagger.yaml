@@ -235,6 +235,20 @@ definitions:
         example: 1
         type: integer
     type: object
+  dto.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  dto.RefreshTokenResponse:
+    properties:
+      refresh_token:
+        type: string
+      token:
+        type: string
+    type: object
   dto.SimpleSummary:
     properties:
       id:
@@ -284,6 +298,8 @@ definitions:
     type: object
   dto.SuccessAuthResponse:
     properties:
+      refresh_token:
+        type: string
       token:
         type: string
       user:
@@ -712,6 +728,42 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Login
+      tags:
+      - Auth
+  /v1/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh the access token
+      parameters:
+      - description: enter your refresh token to refresh the access token
+        in: body
+        name: refreshToken
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RefreshTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Refresh Token
       tags:
       - Auth
   /v1/auth/register:

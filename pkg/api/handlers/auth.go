@@ -41,11 +41,15 @@ func (h *Handler) HandleLogin(c *gin.Context) {
 		return
 	}
 	// generate a token
-	token, err := auth.GenerateToken(findUser.ID)
+	token, err := auth.GenerateToken(findUser.ID, auth.TokenTypeAccess)
 	if err != nil {
 		h.Response.InternalServerErr(c, err.Error())
 		return
-
+	}
+	refreshToken, err := auth.GenerateToken(findUser.ID, auth.TokenTypeRefresh)
+	if err != nil {
+		h.Response.InternalServerErr(c, err.Error())
+		return
 	}
 	userInfo := dto.SuccessAuthResponse{
 		User: dto.UserLoginSummary{
@@ -55,7 +59,8 @@ func (h *Handler) HandleLogin(c *gin.Context) {
 			FirstName: findUser.FirstName,
 			LastName:  findUser.LastName,
 		},
-		Token: token,
+		Token:        token,
+		RefreshToken: refreshToken,
 	}
 
 	//return the token
@@ -101,4 +106,45 @@ func (h *Handler) HandlePostRegister(c *gin.Context) {
 		return
 	}
 	h.Response.SuccessResponse(c, "User created successfully")
+}
+
+// HandleRefreshToken godoc
+//
+//	@Summary		Refresh Token
+//	@Description	Refresh the access token
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			refreshToken	body		dto.RefreshTokenRequest	true	"enter your refresh token to refresh the access token"
+//	 @Security     ApiKeyAuth
+//	@Success		200			{object}	dto.RefreshTokenResponse
+//	@Failure		400			{object}	dto.ErrorResponse
+//	@Failure		401			{object}	dto.ErrorResponse
+//	@Failure		500			{object}	dto.ErrorResponse
+//	@Router			/v1/auth/refresh [post]
+func (h *Handler) HandleRefreshToken(c *gin.Context) {
+	var req dto.RefreshTokenRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		h.Response.BadRequestErr(c, err.Error())
+		return
+	}
+
+	// Parse refresh token
+	token, err := auth.ValidateToken(req.RefreshToken, auth.TokenTypeRefresh)
+
+	if err != nil {
+		h.Response.UnauthorizedErr(c, "Invalid refresh token")
+		return
+	}
+
+	newAccessToken, err := auth.GenerateToken(token.UserId, auth.TokenTypeAccess)
+	if err != nil {
+		h.Response.InternalServerErr(c, err.Error())
+		return
+	}
+	h.Response.SuccessResponse(c, &dto.RefreshTokenResponse{
+		Token:        newAccessToken,
+		RefreshToken: req.RefreshToken,
+	})
 }
