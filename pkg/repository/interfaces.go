@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"warehouse/pkg/api/filter"
 	"warehouse/pkg/models"
 )
@@ -64,6 +65,15 @@ type OrderRepository interface {
 	GetListNoPagination(req filter.Request) ([]*models.Order, error)
 }
 
+type ReportRepository interface {
+	GetThresholdProximity(ctx context.Context, req filter.Request, isPaginated bool) ([]models.ThresholdProximityReport, *filter.CursorResponse, error)
+	GetStoreProductQuantities(ctx context.Context, req filter.Request, isPaginated bool) ([]models.StoreProductQuantityReport, *filter.CursorResponse, error)
+}
+type ActivityRepository interface {
+	Log(userID uint, action, entityType string, entityID uint, description string, payload interface{}) error
+	GetRecent(limit int) ([]models.Activity, error)
+}
+
 // Repository holds all repositories
 type Repository struct {
 	User       UserRepository
@@ -74,4 +84,6 @@ type Repository struct {
 	Product    ProductRepository
 	Store      StoreRepository
 	Order      OrderRepository
+	Report     ReportRepository
+	Activity   ActivityRepository
 }

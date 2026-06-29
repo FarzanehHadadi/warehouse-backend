@@ -5,7 +5,9 @@ import (
 	"warehouse/pkg/api/dto"
 	"warehouse/pkg/api/filter"
 	"warehouse/pkg/api/mapper"
+	"warehouse/pkg/events"
 	"warehouse/pkg/models"
+	"warehouse/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +26,7 @@ import (
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/stores/{id} [get]
 func (h *Handler) HandleGetStore(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	store, err := h.Repository.Store.FindByID(id)
 	if err != nil {
 		h.handleError(c, err, "Store")
@@ -90,7 +92,7 @@ func (h *Handler) HandlePostStore(c *gin.Context) {
 		h.handleError(c, err, "Store")
 		return
 	}
-	h.Response.CreatedResponse(c, "")
+	h.Response.CreatedResponse(c, "", "Store", store.ID, "Store created successfully", store)
 }
 
 // HandlePatchStore godoc
@@ -112,7 +114,7 @@ func (h *Handler) HandlePostStore(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/stores/{id} [patch]
 func (h *Handler) HandlePatchStore(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	var store *models.StoreUpdate
 
 	if err := c.ShouldBindBodyWithJSON(&store); err != nil {
@@ -124,7 +126,7 @@ func (h *Handler) HandlePatchStore(c *gin.Context) {
 		return
 
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Updated, "Store", uint(id), "Store updated successfully", store)
 }
 
 // HandleDeleteStore godoc
@@ -145,12 +147,12 @@ func (h *Handler) HandlePatchStore(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/stores/{id} [delete]
 func (h *Handler) HandleDeleteStore(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 
 	if err := h.Repository.Store.Delete(id); err != nil {
 		h.handleError(c, err, "Store")
 		return
 
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Deleted, "Store", uint(id), "Store deleted successfully", nil)
 }

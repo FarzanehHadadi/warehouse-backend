@@ -6,22 +6,32 @@ import (
 	"gorm.io/gorm"
 )
 
-// apply cursor to filter
+// CompositeKeysetCondition builds a WHERE clause for (primaryExpr, tieBreaker) keyset pagination.
+func CompositeKeysetCondition(primaryExpr, tieBreaker string, desc bool, primaryValue any, tieValue uint) (string, []any) {
+	op := KeysetOp(desc)
+	return fmt.Sprintf("(%s, %s) %s (?, ?)", primaryExpr, tieBreaker, op), []any{primaryValue, tieValue}
+}
+
+// SingleKeysetCondition builds a WHERE clause for single-column keyset pagination.
+func SingleKeysetCondition(field string, desc bool, value any) (string, []any) {
+	op := KeysetOp(desc)
+	return fmt.Sprintf("%s %s ?", field, op), []any{value}
+}
+
+// TripleKeysetCondition builds a WHERE clause for three-column keyset pagination.
+func TripleKeysetCondition(expr1, expr2, expr3 string, desc bool, val1, val2 any, val3 uint) (string, []any) {
+	op := KeysetOp(desc)
+	return fmt.Sprintf("(%s, %s, %s) %s (?, ?, ?)", expr1, expr2, expr3, op), []any{val1, val2, val3}
+}
+
+// ApplyCursor applies GORM cursor pagination for models sorted by created_at.
 func ApplyCursor(
 	query *gorm.DB,
 	req Request,
 	cfg FilterConfig,
 ) (*gorm.DB, error) {
 
-	limit := req.Limit
-
-	if limit <= 0 {
-		limit = 20
-	}
-
-	if limit > 100 {
-		limit = 100
-	}
+	limit := NormalizeLimit(req.Limit)
 
 	sortField := "created_at"
 
@@ -36,13 +46,8 @@ func ApplyCursor(
 		sortField = req.SortBy
 	}
 
-	dir := "ASC"
-	op := ">"
-
-	if req.Desc {
-		dir = "DESC"
-		op = "<"
-	}
+	dir := SortSQLDir(req.Desc)
+	op := KeysetOp(req.Desc)
 
 	cursor, err := DecodeCursor(req.Cursor)
 	if err != nil {

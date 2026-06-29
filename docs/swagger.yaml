@@ -227,6 +227,22 @@ definitions:
         example: Product 1
         type: string
     type: object
+  dto.StoreProductQuantityListResponse:
+    properties:
+      has_more:
+        example: true
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/models.StoreProductQuantityReport'
+        type: array
+      limit:
+        example: 20
+        type: integer
+      next_cursor:
+        example: ""
+        type: string
+    type: object
   dto.StoreSummary:
     properties:
       id:
@@ -294,6 +310,22 @@ definitions:
       id:
         type: integer
       name:
+        type: string
+    type: object
+  dto.ThresholdProximityListResponse:
+    properties:
+      has_more:
+        example: true
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/models.ThresholdProximityReport'
+        type: array
+      limit:
+        example: 20
+        type: integer
+      next_cursor:
+        example: ""
         type: string
     type: object
   dto.Unit:
@@ -500,6 +532,21 @@ definitions:
     - unit_id
     - warning_threshold
     type: object
+  models.StoreProductQuantityReport:
+    properties:
+      category_id:
+        example: 2
+        type: integer
+      product_id:
+        example: 1
+        type: integer
+      store_id:
+        example: 3
+        type: integer
+      total_quantity:
+        example: 50
+        type: integer
+    type: object
   models.StoreUpdate:
     properties:
       is_active:
@@ -510,6 +557,36 @@ definitions:
         maxLength: 100
         minLength: 3
         type: string
+    type: object
+  models.ThresholdProximityReport:
+    properties:
+      category_id:
+        example: 2
+        type: integer
+      category_name:
+        example: Category A
+        type: string
+      current_quantity:
+        example: 5
+        type: integer
+      product_id:
+        example: 1
+        type: integer
+      product_name:
+        example: Product A
+        type: string
+      stores_count:
+        example: 2
+        type: integer
+      unit_id:
+        example: 3
+        type: integer
+      unit_name:
+        example: kg
+        type: string
+      warning_threshold:
+        example: 10
+        type: integer
     type: object
   models.Unit:
     properties:
@@ -765,6 +842,7 @@ paths:
             $ref: '#/definitions/dto.ErrorResponse'
       security:
       - ApiKeyAuth: []
+      - Bearer: []
       summary: Modify a category
       tags:
       - Categories
@@ -1697,6 +1775,238 @@ paths:
       summary: Search in products
       tags:
       - Products
+  /v1/reports/store-product-quantities:
+    get:
+      consumes:
+      - application/json
+      description: Returns total product quantity per store, with optional filters
+        by product and category.
+      parameters:
+      - description: Filter by product ID
+        in: query
+        name: product_id
+        type: integer
+      - description: Filter by category ID
+        in: query
+        name: category_id
+        type: integer
+      - description: Sort field
+        enum:
+        - total_quantity
+        - product_id
+        - store_id
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      - description: Cursor for next page
+        in: query
+        name: cursor
+        type: string
+      - description: Number of items per page (max 100)
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StoreProductQuantityListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Store product quantities report
+      tags:
+      - Reports
+  /v1/reports/store-product-quantities/export:
+    get:
+      consumes:
+      - application/json
+      description: Export filtered store product quantities report as an Excel (.xlsx)
+        file. Supports the same query filters as the store product quantities report
+        list endpoint.
+      parameters:
+      - description: Filter by product ID
+        in: query
+        name: product_id
+        type: integer
+      - description: Filter by category ID
+        in: query
+        name: category_id
+        type: integer
+      - description: Sort field
+        enum:
+        - total_quantity
+        - product_id
+        - store_id
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      produces:
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      responses:
+        "200":
+          description: Excel file download
+          schema:
+            type: file
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Export store product quantities report to Excel
+      tags:
+      - Reports
+  /v1/reports/threshold-proximity:
+    get:
+      consumes:
+      - application/json
+      description: Returns products whose current stock quantity is at or below the
+        warning threshold, including category, unit, and store count.
+      parameters:
+      - description: Filter by product ID
+        in: query
+        name: product_id
+        type: integer
+      - description: Filter by store ID
+        in: query
+        name: store_id
+        type: integer
+      - description: Filter by category ID
+        in: query
+        name: category_id
+        type: integer
+      - description: Sort field
+        enum:
+        - current_quantity
+        - product_id
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      - description: Cursor for next page
+        in: query
+        name: cursor
+        type: string
+      - description: Number of items per page (max 100)
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ThresholdProximityListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Threshold proximity report
+      tags:
+      - Reports
+  /v1/reports/threshold-proximity/export:
+    get:
+      consumes:
+      - application/json
+      description: Export filtered threshold proximity report as an Excel (.xlsx)
+        file. Supports the same query filters as the threshold proximity report list
+        endpoint.
+      parameters:
+      - description: Filter by product ID
+        in: query
+        name: product_id
+        type: integer
+      - description: Filter by store ID
+        in: query
+        name: store_id
+        type: integer
+      - description: Filter by category ID
+        in: query
+        name: category_id
+        type: integer
+      - description: Sort field
+        enum:
+        - current_quantity
+        - product_id
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      produces:
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      responses:
+        "200":
+          description: Excel file download
+          schema:
+            type: file
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Export threshold proximity report to Excel
+      tags:
+      - Reports
   /v1/stores:
     get:
       consumes:

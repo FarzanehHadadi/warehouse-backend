@@ -4,8 +4,10 @@ import (
 	"warehouse/pkg/api/appresponse"
 	"warehouse/pkg/api/dto"
 	"warehouse/pkg/api/filter"
+	"warehouse/pkg/events"
 	"warehouse/pkg/models"
 	"warehouse/pkg/repository"
+	"warehouse/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,7 +28,7 @@ import (
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/units/{id} [get]
 func (h *Handler) HandleGetUnitById(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 
 	unit, err := h.Repository.Unit.FindByID(id)
 	if err != nil {
@@ -110,7 +112,7 @@ func (h *Handler) HandlePostUnit(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.CreatedResponse(c, "")
+	h.Response.CreatedResponse(c, "", "Unit", unit.ID, "Unit created successfully", unit)
 
 }
 
@@ -132,7 +134,7 @@ func (h *Handler) HandlePostUnit(c *gin.Context) {
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/units/{id} [delete]
 func (h *Handler) HandleDeleteUnit(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	if err := h.Repository.Unit.Delete(id); err != nil {
 		switch err {
 		case repository.ErrNotFound:
@@ -142,7 +144,7 @@ func (h *Handler) HandleDeleteUnit(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Deleted, "Unit", uint(id), "Unit deleted successfully", nil)
 }
 
 // HandlePatchUnit godoc
@@ -164,7 +166,7 @@ func (h *Handler) HandleDeleteUnit(c *gin.Context) {
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/units/{id} [patch]
 func (h *Handler) HandlePatchUnit(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	var unit *models.Unit
 
 	if err := c.ShouldBindBodyWithJSON(&unit); err != nil {
@@ -181,5 +183,5 @@ func (h *Handler) HandlePatchUnit(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Updated, "Unit", uint(id), "Unit updated successfully", unit)
 }

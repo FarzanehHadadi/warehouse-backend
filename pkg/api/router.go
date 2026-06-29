@@ -147,4 +147,15 @@ func (r *Router) setupRoutes() {
 
 	}
 
+	reports := v1.Group("/reports")
+	{
+		protectedReports := reports.Group("/", middleware.JwtAuth())
+		{
+			protectedReports.GET("/threshold-proximity/", r.handler.HandleGetThresholdProximityReport)
+			protectedReports.GET("/threshold-proximity/export", r.handler.HandleExportThresholdProximityReport)
+			protectedReports.GET("/store-product-quantities/export", r.handler.HandleExportStoreProductQuantitiesReport)
+			protectedReports.GET("/store-product-quantities/", r.handler.HandleGetStoreProductQuantitiesReport)
+		}
+	}
+
 }

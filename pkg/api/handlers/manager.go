@@ -5,7 +5,9 @@ import (
 	"warehouse/pkg/api/dto"
 	"warehouse/pkg/api/filter"
 	"warehouse/pkg/api/mapper"
+	"warehouse/pkg/events"
 	"warehouse/pkg/models"
+	"warehouse/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +26,7 @@ import (
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/managers/{id} [get]
 func (h *Handler) HandleGetManager(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 
 	manager, err := h.Repository.Manager.FindByID(id)
 	if err != nil {
@@ -64,7 +66,7 @@ func (h *Handler) HandlePostManager(c *gin.Context) {
 
 		return
 	}
-	h.Response.CreatedResponse(c, "")
+	h.Response.CreatedResponse(c, "", "Manager", manager.ID, "Manager created successfully", manager)
 }
 
 // HandlePatchManager godoc
@@ -86,7 +88,7 @@ func (h *Handler) HandlePostManager(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/managers/{id} [patch]
 func (h *Handler) HandlePatchManager(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	var dep *models.ManagerUpdate
 	if err := c.ShouldBindBodyWithJSON(&dep); err != nil {
 		h.Response.BadRequestErr(c, err.Error())
@@ -96,7 +98,7 @@ func (h *Handler) HandlePatchManager(c *gin.Context) {
 		h.handleError(c, err, "Manager")
 		return
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Updated, "Manager", uint(id), "Manager updated successfully", dep)
 
 }
 
@@ -118,12 +120,12 @@ func (h *Handler) HandlePatchManager(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/managers/{id} [delete]
 func (h *Handler) HandleDeleteManager(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	if err := h.Repository.Manager.Delete(id); err != nil {
 		h.handleError(c, err, "Manager")
 		return
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Deleted, "Manager", uint(id), "Manager deleted successfully", nil)
 
 }
 

@@ -6,7 +6,9 @@ import (
 	"warehouse/pkg/api/export"
 	"warehouse/pkg/api/filter"
 	"warehouse/pkg/api/mapper"
+	"warehouse/pkg/events"
 	"warehouse/pkg/logger"
+	"warehouse/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -26,7 +28,7 @@ import (
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/orders/{id} [get]
 func (h *Handler) HandleGetOrder(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	order, err := h.Repository.Order.FindByID(id)
 	if err != nil {
 		h.handleError(c, err, "Order")
@@ -97,7 +99,7 @@ func (h *Handler) HandlePostOrder(c *gin.Context) {
 		h.handleError(c, err, "Order")
 		return
 	}
-	h.Response.CreatedResponse(c, "")
+	h.Response.CreatedResponse(c, "", "Order", 0, "Order created successfully", req)
 }
 
 // HandlePatchOrder godoc
@@ -119,7 +121,7 @@ func (h *Handler) HandlePostOrder(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/orders/{id} [patch]
 func (h *Handler) HandlePatchOrder(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	var req dto.UpdateOrderRequest
 
 	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
@@ -131,7 +133,7 @@ func (h *Handler) HandlePatchOrder(c *gin.Context) {
 		return
 
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Updated, "Order", uint(id), "Order updated successfully", req)
 }
 
 // HandleDeleteOrder godoc
@@ -152,14 +154,14 @@ func (h *Handler) HandlePatchOrder(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/orders/{id} [delete]
 func (h *Handler) HandleDeleteOrder(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 
 	if err := h.Repository.Order.Delete(id); err != nil {
 		h.handleError(c, err, "Order")
 		return
 
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Deleted, "Order", uint(id), "Order deleted successfully", nil)
 }
 
 // HandleExportOrder godoc

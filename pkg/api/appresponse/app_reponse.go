@@ -6,6 +6,7 @@ import (
 	"time"
 	"warehouse/pkg/api/apperr"
 	"warehouse/pkg/api/filter"
+	"warehouse/pkg/events"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,14 +41,16 @@ func (r *Response) ListSuccessResponse(c *gin.Context, data any) {
 	c.JSON(http.StatusOK, gin.H{"data": data})
 }
 
-func (r *Response) CreatedResponse(c *gin.Context, data interface{}) {
+func (r *Response) CreatedResponse(c *gin.Context, data interface{}, entityType string, entityID uint, description string, payload interface{}) {
 	c.JSON(http.StatusCreated, gin.H{
 		"data": data,
 	})
+	events.Log(c, events.Created, entityType, entityID, description, payload)
 }
 
-func (r *Response) NoContentResponse(c *gin.Context) {
+func (r *Response) NoContentResponse(c *gin.Context, action events.Action, entityType string, entityID uint, description string, payload interface{}) {
 	c.Status(http.StatusNoContent)
+	events.Log(c, action, entityType, entityID, description, payload)
 }
 
 // Error response

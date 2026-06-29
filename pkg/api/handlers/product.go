@@ -5,7 +5,9 @@ import (
 	"warehouse/pkg/api/dto"
 	"warehouse/pkg/api/filter"
 	"warehouse/pkg/api/mapper"
+	"warehouse/pkg/events"
 	"warehouse/pkg/models"
+	"warehouse/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +26,7 @@ import (
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/products/{id} [get]
 func (h *Handler) HandleGetProduct(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	prd, err := h.Repository.Product.FindByID(id)
 	if err != nil {
 		h.handleError(c, err, "Product")
@@ -92,7 +94,7 @@ func (h *Handler) HandlePostProduct(c *gin.Context) {
 		h.handleError(c, err, "Product")
 		return
 	}
-	h.Response.CreatedResponse(c, "")
+	h.Response.CreatedResponse(c, "", "Product", product.ID, "Product created successfully", product)
 }
 
 // HandlePatchProduct godoc
@@ -114,7 +116,7 @@ func (h *Handler) HandlePostProduct(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/products/{id} [patch]
 func (h *Handler) HandlePatchProduct(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	var product *models.ProductUpdate
 	if err := c.ShouldBindBodyWithJSON(&product); err != nil {
 		h.handleError(c, err, "product")
@@ -124,7 +126,7 @@ func (h *Handler) HandlePatchProduct(c *gin.Context) {
 		h.handleError(c, err, "product")
 		return
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Updated, "Product", uint(id), "Product updated successfully", product)
 }
 
 // HandleDeleteProduct godoc
@@ -145,12 +147,12 @@ func (h *Handler) HandlePatchProduct(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/products/{id} [delete]
 func (h *Handler) HandleDeleteProduct(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	if err := h.Repository.Product.Delete(id); err != nil {
 		h.handleError(c, err, "Product")
 		return
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Deleted, "Product", uint(id), "Product deleted successfully", nil)
 }
 
 // @Summary      Search in products

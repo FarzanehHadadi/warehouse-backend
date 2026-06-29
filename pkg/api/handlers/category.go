@@ -5,8 +5,10 @@ import (
 	"warehouse/pkg/api/appresponse"
 	"warehouse/pkg/api/dto"
 	"warehouse/pkg/api/filter"
+	"warehouse/pkg/events"
 	"warehouse/pkg/models"
 	"warehouse/pkg/repository"
+	"warehouse/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +27,7 @@ import (
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/categories/{id} [get]
 func (h *Handler) HandleGetCategory(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 
 	cat, err := h.Repository.Category.FindByID(uint(id))
 	if err != nil {
@@ -73,7 +75,7 @@ func (h *Handler) HandlePostCategory(c *gin.Context) {
 		return
 	}
 
-	h.Response.CreatedResponse(c, "")
+	h.Response.CreatedResponse(c, "", "Category", cat.ID, "Category created successfully", cat)
 
 }
 
@@ -95,7 +97,7 @@ func (h *Handler) HandlePostCategory(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/categories/{id} [delete]
 func (h *Handler) HandleDeleteCategory(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 
 	if err := h.Repository.Category.Delete(uint(id)); err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
@@ -107,7 +109,7 @@ func (h *Handler) HandleDeleteCategory(c *gin.Context) {
 		return
 
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Deleted, "Category", uint(id), "Category deleted successfully", nil)
 
 }
 
@@ -117,6 +119,9 @@ func (h *Handler) HandleDeleteCategory(c *gin.Context) {
 //	@Description	Modify a category
 //	@Tags			Categories
 //	 @Security     ApiKeyAuth
+//
+// @Security     Bearer
+//
 //	@Accept			json
 //	@Produce		json
 //	@Param			id			path		int				true	"Category ID"
@@ -127,7 +132,7 @@ func (h *Handler) HandleDeleteCategory(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/categories/{id} [patch]
 func (h *Handler) HandlePatchCategory(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 
 	var cat models.Category
 	if err := c.ShouldBindJSON(&cat); err != nil {
@@ -145,7 +150,7 @@ func (h *Handler) HandlePatchCategory(c *gin.Context) {
 		return
 	}
 
-	h.Response.SuccessResponse(c, "")
+	h.Response.NoContentResponse(c, events.Updated, "Category", uint(id), "Category updated successfully", cat)
 
 }
 

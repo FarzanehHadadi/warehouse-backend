@@ -5,8 +5,10 @@ import (
 	"warehouse/pkg/api/appresponse"
 	"warehouse/pkg/api/dto"
 	"warehouse/pkg/api/filter"
+	"warehouse/pkg/events"
 	"warehouse/pkg/models"
 	"warehouse/pkg/repository"
+	"warehouse/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +27,7 @@ import (
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/departments/{id} [get]
 func (h *Handler) HandleGetDepartment(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	department, err := h.Repository.Department.FindByID(id)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
@@ -74,7 +76,7 @@ func (h *Handler) HandlePostDepartment(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.CreatedResponse(c, "")
+	h.Response.CreatedResponse(c, "", "Department", department.ID, "Department created successfully", department)
 }
 
 // HandlePatchDepartment godoc
@@ -96,7 +98,7 @@ func (h *Handler) HandlePostDepartment(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/departments/{id} [patch]
 func (h *Handler) HandlePatchDepartment(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	var dep *models.DepartmentUpdate
 	if err := c.ShouldBindBodyWithJSON(&dep); err != nil {
 		h.Response.BadRequestErr(c, err.Error())
@@ -112,7 +114,7 @@ func (h *Handler) HandlePatchDepartment(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Updated, "Department", uint(id), "Department updated successfully", dep)
 
 }
 
@@ -134,7 +136,7 @@ func (h *Handler) HandlePatchDepartment(c *gin.Context) {
 //	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/departments/{id} [delete]
 func (h *Handler) HandleDeleteDepartment(c *gin.Context) {
-	id := GetIDFromContext(c)
+	id := utils.GetIDFromContext(c)
 	if err := h.Repository.Department.Delete(id); err != nil {
 		switch err {
 		case repository.ErrNotFound:
@@ -145,7 +147,7 @@ func (h *Handler) HandleDeleteDepartment(c *gin.Context) {
 		}
 		return
 	}
-	h.Response.NoContentResponse(c)
+	h.Response.NoContentResponse(c, events.Deleted, "Department", uint(id), "Department deleted successfully", nil)
 
 }
 

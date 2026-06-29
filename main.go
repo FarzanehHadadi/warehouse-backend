@@ -9,6 +9,8 @@ import (
 	"warehouse/pkg/api"
 	"warehouse/pkg/api/auth"
 	"warehouse/pkg/database"
+	"warehouse/pkg/events"
+	"warehouse/pkg/listeners"
 	"warehouse/pkg/logger"
 	"warehouse/pkg/repository"
 
@@ -48,6 +50,7 @@ func main() {
 
 	// Repository (now cleanly initialized in its own package)
 	repo := repository.NewRepository(db)
+	setupEventListeners(repo)
 	jwtSecretKey := os.Getenv("JWT_SECRET_KEY")
 	auth.LoadSecretKey([]byte(jwtSecretKey))
 	// API Router with handler
@@ -79,3 +82,10 @@ func main() {
 
 // Graceful shutdown func
 // tion (kept the same)
+func setupEventListeners(repo *repository.Repository) {
+	logger := listeners.NewActivityLogger(repo.Activity) // using your ActivityRepository
+
+	events.Bus.Subscribe(events.Created, logger.Handle)
+	events.Bus.Subscribe(events.Updated, logger.Handle)
+	events.Bus.Subscribe(events.Deleted, logger.Handle)
+}
