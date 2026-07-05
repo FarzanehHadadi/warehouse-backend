@@ -1,0 +1,13 @@
+.git
+.gitignore
+.vscode
+.idea
+
+tmp/
+docs/
+
+*.log
+
+.env
+
+node_modules

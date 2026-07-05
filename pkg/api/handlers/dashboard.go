@@ -12,8 +12,8 @@ import (
 //	@Description	Get dashboard
 //	@Tags			Dashboard
 //	@Accept			json
-//	 @Security     ApiKeyAuth
-//	 @Security     Bearer
+//	@Security		ApiKeyAuth
+//	@Security		Bearer
 //	@Produce		json
 //	@Success		200	{object}	models.DashboardStats
 //	@Failure		404	{object}	dto.ErrorResponse
@@ -33,8 +33,8 @@ func (h *Handler) HandleGetDashboard(c *gin.Context) {
 //	@Description	Get recent activities
 //	@Tags			Dashboard
 //	@Accept			json
-//	 @Security     ApiKeyAuth
-//	 @Security     Bearer
+//	@Security		ApiKeyAuth
+//	@Security		Bearer
 //	@Produce		json
 //	@Success		200	{object}	dto.SuccessActivityResponse
 //	@Failure		404	{object}	dto.ErrorResponse

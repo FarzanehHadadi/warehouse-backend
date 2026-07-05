@@ -16,12 +16,12 @@ import (
 //	@Tags			Auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			loginInfo	body		dto.UserDto	true	"enter your phone number and password to login"
-//	 @Security     ApiKeyAuth
-//	@Success		200			{object}	dto.SuccessAuthResponse
-//	@Failure		400			{object}	dto.ErrorResponse
-//	@Failure		401			{object}	dto.ErrorResponse
-//	@Failure		500			{object}	dto.ErrorResponse
+//	@Param			loginInfo	body	dto.UserDto	true	"enter your phone number and password to login"
+//	@Security		ApiKeyAuth
+//	@Success		200	{object}	dto.SuccessAuthResponse
+//	@Failure		400	{object}	dto.ErrorResponse
+//	@Failure		401	{object}	dto.ErrorResponse
+//	@Failure		500	{object}	dto.ErrorResponse
 //	@Router			/v1/auth/login [post]
 func (h *Handler) HandleLogin(c *gin.Context) {
 	var user dto.UserDto
@@ -74,13 +74,13 @@ func (h *Handler) HandleLogin(c *gin.Context) {
 //	@Tags			Auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			registerInfo	body		models.CreateUserRequest	true	"enter your phone number and password to register"
-//	 @Security     ApiKeyAuth
-//	 @Security     AdminRegistrationKeyAuth
-//	@Success		200				"No Content - User created successfully"
-//	@Failure		400			{object}	dto.ErrorResponse
-//	@Failure		401			{object}	dto.ErrorResponse
-//	@Failure		500			{object}	dto.ErrorResponse
+//	@Param			registerInfo	body	models.CreateUserRequest	true	"enter your phone number and password to register"
+//	@Security		ApiKeyAuth
+//	@Security		AdminRegistrationKeyAuth
+//	@Success		200	"No Content - User created successfully"
+//	@Failure		400	{object}	dto.ErrorResponse
+//	@Failure		401	{object}	dto.ErrorResponse
+//	@Failure		500	{object}	dto.ErrorResponse
 //	@Router			/v1/auth/register [post]
 func (h *Handler) HandlePostRegister(c *gin.Context) {
 	var req models.CreateUserRequest
@@ -115,12 +115,12 @@ func (h *Handler) HandlePostRegister(c *gin.Context) {
 //	@Tags			Auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			refreshToken	body		dto.RefreshTokenRequest	true	"enter your refresh token to refresh the access token"
-//	 @Security     ApiKeyAuth
-//	@Success		200			{object}	dto.RefreshTokenResponse
-//	@Failure		400			{object}	dto.ErrorResponse
-//	@Failure		401			{object}	dto.ErrorResponse
-//	@Failure		500			{object}	dto.ErrorResponse
+//	@Param			refreshToken	body	dto.RefreshTokenRequest	true	"enter your refresh token to refresh the access token"
+//	@Security		ApiKeyAuth
+//	@Success		200	{object}	dto.RefreshTokenResponse
+//	@Failure		400	{object}	dto.ErrorResponse
+//	@Failure		401	{object}	dto.ErrorResponse
+//	@Failure		500	{object}	dto.ErrorResponse
 //	@Router			/v1/auth/refresh [post]
 func (h *Handler) HandleRefreshToken(c *gin.Context) {
 	var req dto.RefreshTokenRequest

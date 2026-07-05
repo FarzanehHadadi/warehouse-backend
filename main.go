@@ -24,20 +24,20 @@ import (
 //	@host		localhost:8080
 //	@BasePath	/v1
 
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name X-API-Key
-// @description Enter your API Key here
+//	@securityDefinitions.apikey	ApiKeyAuth
+//	@in							header
+//	@name						X-API-Key
+//	@description				Enter your API Key here
 
-// @securityDefinitions.apikey AdminRegistrationKeyAuth
-// @in header
-// @name X-Admin-Key
-// @description Enter your Admin Registration Key here
+//	@securityDefinitions.apikey	AdminRegistrationKeyAuth
+//	@in							header
+//	@name						X-Admin-Key
+//	@description				Enter your Admin Registration Key here
 
-// @securityDefinitions.apikey Bearer
-// @in header
-// @name Authorization
-// @description Enter JWT with Bearer prefix
+// @securityDefinitions.apikey	Bearer
+// @in							header
+// @name						Authorization
+// @description				Enter JWT with Bearer prefix
 func main() {
 	logger.Init()
 	defer logger.Sync()

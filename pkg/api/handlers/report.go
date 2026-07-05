@@ -18,16 +18,16 @@ import (
 //	@Produce		json
 //	@Security		ApiKeyAuth
 //	@Security		Bearer
-//	@Param			product_id		query	integer	false	"Filter by product ID"
-//	@Param			store_id		query	integer	false	"Filter by store ID"
-//	@Param			category_id		query	integer	false	"Filter by category ID"
-//	@Param			sort_by			query	string	false	"Sort field" Enums(current_quantity,product_id)
-//	@Param			sort_order		query	string	false	"Sort direction" Enums(asc,desc)
-//	@Param			cursor			query	string	false	"Cursor for next page"
-//	@Param			limit			query	integer	false	"Number of items per page (max 100)" minimum(1) maximum(100)
-//	@Success		200	{object}	dto.ThresholdProximityListResponse
-//	@Failure		400	{object}	dto.ErrorResponse
-//	@Failure		500	{object}	dto.ErrorResponse
+//	@Param			product_id	query		integer	false	"Filter by product ID"
+//	@Param			store_id	query		integer	false	"Filter by store ID"
+//	@Param			category_id	query		integer	false	"Filter by category ID"
+//	@Param			sort_by		query		string	false	"Sort field"		Enums(current_quantity,product_id)
+//	@Param			sort_order	query		string	false	"Sort direction"	Enums(asc,desc)
+//	@Param			cursor		query		string	false	"Cursor for next page"
+//	@Param			limit		query		integer	false	"Number of items per page (max 100)"	minimum(1)	maximum(100)
+//	@Success		200			{object}	dto.ThresholdProximityListResponse
+//	@Failure		400			{object}	dto.ErrorResponse
+//	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/reports/threshold-proximity [get]
 func (h *Handler) HandleGetThresholdProximityReport(c *gin.Context) {
 	req := dto.NewPaginationRequestFromConfig(c, filter.ThresholdProximityFilterConfig)
@@ -53,14 +53,14 @@ func (h *Handler) HandleGetThresholdProximityReport(c *gin.Context) {
 //	@Produce		application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 //	@Security		ApiKeyAuth
 //	@Security		Bearer
-//	@Param			product_id		query	integer	false	"Filter by product ID"
-//	@Param			store_id		query	integer	false	"Filter by store ID"
-//	@Param			category_id		query	integer	false	"Filter by category ID"
-//	@Param			sort_by			query	string	false	"Sort field" Enums(current_quantity,product_id)
-//	@Param			sort_order		query	string	false	"Sort direction" Enums(asc,desc)
-//	@Success		200	{file}	binary	"Excel file download"
-//	@Failure		400	{object}	dto.ErrorResponse
-//	@Failure		500	{object}	dto.ErrorResponse
+//	@Param			product_id	query		integer	false	"Filter by product ID"
+//	@Param			store_id	query		integer	false	"Filter by store ID"
+//	@Param			category_id	query		integer	false	"Filter by category ID"
+//	@Param			sort_by		query		string	false	"Sort field"		Enums(current_quantity,product_id)
+//	@Param			sort_order	query		string	false	"Sort direction"	Enums(asc,desc)
+//	@Success		200			{file}		binary	"Excel file download"
+//	@Failure		400			{object}	dto.ErrorResponse
+//	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/reports/threshold-proximity/export [get]
 func (h *Handler) HandleExportThresholdProximityReport(c *gin.Context) {
 	req := dto.NewPaginationRequestFromConfig(c, filter.ThresholdProximityFilterConfig)
@@ -96,15 +96,15 @@ func (h *Handler) HandleExportThresholdProximityReport(c *gin.Context) {
 //	@Produce		json
 //	@Security		ApiKeyAuth
 //	@Security		Bearer
-//	@Param			product_id		query	integer	false	"Filter by product ID"
-//	@Param			category_id		query	integer	false	"Filter by category ID"
-//	@Param			sort_by			query	string	false	"Sort field" Enums(total_quantity,product_id,store_id)
-//	@Param			sort_order		query	string	false	"Sort direction" Enums(asc,desc)
-//	@Param			cursor			query	string	false	"Cursor for next page"
-//	@Param			limit			query	integer	false	"Number of items per page (max 100)" minimum(1) maximum(100)
-//	@Success		200	{object}	dto.StoreProductQuantityListResponse
-//	@Failure		400	{object}	dto.ErrorResponse
-//	@Failure		500	{object}	dto.ErrorResponse
+//	@Param			product_id	query		integer	false	"Filter by product ID"
+//	@Param			category_id	query		integer	false	"Filter by category ID"
+//	@Param			sort_by		query		string	false	"Sort field"		Enums(total_quantity,product_id,store_id)
+//	@Param			sort_order	query		string	false	"Sort direction"	Enums(asc,desc)
+//	@Param			cursor		query		string	false	"Cursor for next page"
+//	@Param			limit		query		integer	false	"Number of items per page (max 100)"	minimum(1)	maximum(100)
+//	@Success		200			{object}	dto.StoreProductQuantityListResponse
+//	@Failure		400			{object}	dto.ErrorResponse
+//	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/reports/store-product-quantities [get]
 func (h *Handler) HandleGetStoreProductQuantitiesReport(c *gin.Context) {
 	req := dto.NewPaginationRequestFromConfig(c, filter.StoreProductQuantityFilterConfig)
@@ -130,13 +130,13 @@ func (h *Handler) HandleGetStoreProductQuantitiesReport(c *gin.Context) {
 //	@Produce		application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 //	@Security		ApiKeyAuth
 //	@Security		Bearer
-//	@Param			product_id		query	integer	false	"Filter by product ID"
-//	@Param			category_id		query	integer	false	"Filter by category ID"
-//	@Param			sort_by			query	string	false	"Sort field" Enums(total_quantity,product_id,store_id)
-//	@Param			sort_order		query	string	false	"Sort direction" Enums(asc,desc)
-//	@Success		200	{file}	binary	"Excel file download"
-//	@Failure		400	{object}	dto.ErrorResponse
-//	@Failure		500	{object}	dto.ErrorResponse
+//	@Param			product_id	query		integer	false	"Filter by product ID"
+//	@Param			category_id	query		integer	false	"Filter by category ID"
+//	@Param			sort_by		query		string	false	"Sort field"		Enums(total_quantity,product_id,store_id)
+//	@Param			sort_order	query		string	false	"Sort direction"	Enums(asc,desc)
+//	@Success		200			{file}		binary	"Excel file download"
+//	@Failure		400			{object}	dto.ErrorResponse
+//	@Failure		500			{object}	dto.ErrorResponse
 //	@Router			/v1/reports/store-product-quantities/export [get]
 func (h *Handler) HandleExportStoreProductQuantitiesReport(c *gin.Context) {
 	req := dto.NewPaginationRequestFromConfig(c, filter.StoreProductQuantityFilterConfig)

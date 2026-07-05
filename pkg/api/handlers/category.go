@@ -19,8 +19,8 @@ import (
 //	@Description	Get a single category by its ID
 //	@Tags			Categories
 //	@Accept			json
-//	 @Security     ApiKeyAuth
-//	 @Security     Bearer
+//	@Security		ApiKeyAuth
+//	@Security		Bearer
 //	@Produce		json
 //	@Param			id	path		int	true	"Category ID"
 //	@Success		200	{object}	dto.SuccessCategoryResponse
@@ -49,9 +49,9 @@ func (h *Handler) HandleGetCategory(c *gin.Context) {
 //	@Tags			Categories
 //	@Accept			json
 //	@Produce		json
-//	 @Security     ApiKeyAuth
-//	 @Security     Bearer
-//	@Param			category	body		dto.Category	true	"Category object with updated data"
+//	@Security		ApiKeyAuth
+//	@Security		Bearer
+//	@Param			category	body	dto.Category	true	"Category object with updated data"
 //	@Success		200			"No Content - Category successfully updated"
 //	@Failure		400			{object}	dto.ErrorResponse
 //	@Failure		404			{object}	dto.ErrorResponse
@@ -81,20 +81,20 @@ func (h *Handler) HandlePostCategory(c *gin.Context) {
 
 // HandleDeleteCategory godoc
 //
-//		@Summary		Delete a category
-//		@Description	Delete a category
-//		@Tags			Categories
-//		@Accept			json
-//		@Produce		json
-//	 @Security     ApiKeyAuth
+//	@Summary		Delete a category
+//	@Description	Delete a category
+//	@Tags			Categories
+//	@Accept			json
+//	@Produce		json
+//	@Security		ApiKeyAuth
 //
-// @Security     Bearer
+//	@Security		Bearer
 //
-//	@Param			id			path		int				true	"Category ID"
-//	@Success		200			"No Content"
-//	@Failure		400			{object}	dto.ErrorResponse
-//	@Failure		404			{object}	dto.ErrorResponse
-//	@Failure		500			{object}	dto.ErrorResponse
+//	@Param			id	path	int	true	"Category ID"
+//	@Success		200	"No Content"
+//	@Failure		400	{object}	dto.ErrorResponse
+//	@Failure		404	{object}	dto.ErrorResponse
+//	@Failure		500	{object}	dto.ErrorResponse
 //	@Router			/v1/categories/{id} [delete]
 func (h *Handler) HandleDeleteCategory(c *gin.Context) {
 	id := utils.GetIDFromContext(c)
@@ -118,14 +118,14 @@ func (h *Handler) HandleDeleteCategory(c *gin.Context) {
 //	@Summary		Modify a category
 //	@Description	Modify a category
 //	@Tags			Categories
-//	 @Security     ApiKeyAuth
+//	@Security		ApiKeyAuth
 //
-// @Security     Bearer
+//	@Security		Bearer
 //
 //	@Accept			json
 //	@Produce		json
-//	@Param			id			path		int				true	"Category ID"
-//	@Param			category	body		dto.Category	true	"Category object with updated data"
+//	@Param			id			path	int				true	"Category ID"
+//	@Param			category	body	dto.Category	true	"Category object with updated data"
 //	@Success		200			"No Content - Category successfully updated"
 //	@Failure		400			{object}	dto.ErrorResponse
 //	@Failure		404			{object}	dto.ErrorResponse
@@ -162,17 +162,17 @@ func (h *Handler) HandlePatchCategory(c *gin.Context) {
 //	@Security		ApiKeyAuth
 //	@Accept			json
 //	@Produce		json
-//	@Param			search			query	string	false	"Global search in name"
-//	@Param			name			query	string	false	"Filter by name (partial match)"
-//	@Param			created_after	query	string	false	"Created after date (YYYY-MM-DD)"
-//	@Param			created_before	query	string	false	"Created before date (YYYY-MM-DD)"
-//	@Param			sort_by			query	string	false	"Sort field" Enums(id,name,created_at)
-//	@Param			sort_order		query	string	false	"Sort direction" Enums(asc,desc)
-//	@Param			cursor			query	string	false	"Cursor for next page"
-//	@Param			limit			query	integer	false	"Number of items per page (max 100)" minimum(1) maximum(100)
-//	@Success		200	{object}	dto.SuccessCategoriesResponse
-//	@Failure		400	{object}	dto.ErrorResponse
-//	@Failure		500	{object}	dto.ErrorResponse
+//	@Param			search			query		string	false	"Global search in name"
+//	@Param			name			query		string	false	"Filter by name (partial match)"
+//	@Param			created_after	query		string	false	"Created after date (YYYY-MM-DD)"
+//	@Param			created_before	query		string	false	"Created before date (YYYY-MM-DD)"
+//	@Param			sort_by			query		string	false	"Sort field"		Enums(id,name,created_at)
+//	@Param			sort_order		query		string	false	"Sort direction"	Enums(asc,desc)
+//	@Param			cursor			query		string	false	"Cursor for next page"
+//	@Param			limit			query		integer	false	"Number of items per page (max 100)"	minimum(1)	maximum(100)
+//	@Success		200				{object}	dto.SuccessCategoriesResponse
+//	@Failure		400				{object}	dto.ErrorResponse
+//	@Failure		500				{object}	dto.ErrorResponse
 //	@Router			/v1/categories [get]
 func (h *Handler) HandleGetListCategories(c *gin.Context) {
 

@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 	"warehouse/pkg/models"
+	"warehouse/pkg/utils"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -26,12 +27,12 @@ type dbConfig struct {
 
 func DefaultConfig() dbConfig {
 	return dbConfig{
-		Host:            "localhost",
-		Port:            "5432",
-		DbName:          "warehouse",
-		Username:        "postgres",
-		password:        "123456",
-		SSLMode:         "disable",
+		Host:            utils.GetEnv("DB_HOST", "localhost"),
+		Port:            utils.GetEnv("DB_PORT", "5432"),
+		Username:        utils.GetEnv("DB_USER", "postgres"),
+		password:        utils.GetEnv("DB_PASSWORD", "123456"),
+		DbName:          utils.GetEnv("DB_NAME", "warehouse"),
+		SSLMode:         utils.GetEnv("DB_SSLMODE", "disable"),
 		MaxOpenConn:     25,
 		MaxIdleConn:     10,
 		ConnMaxLifeTime: time.Minute * 5,
@@ -40,7 +41,8 @@ func DefaultConfig() dbConfig {
 }
 
 func NewPostgresConfiguration(cfg *dbConfig) (*gorm.DB, error) {
-
+	log.Println("DB HOST:", cfg.Host)
+	log.Println("DB NAME:", cfg.DbName)
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=UTC",
 		cfg.Host, cfg.Port, cfg.Username, cfg.password, cfg.DbName, cfg.SSLMode)
 	gormConfig := &gorm.Config{

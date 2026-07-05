@@ -18,9 +18,9 @@ import (
 //	@Description	Get a single unit by its ID
 //	@Tags			Units
 //	@Accept			json
-//	 @Security     ApiKeyAuth
+//	@Security		ApiKeyAuth
 //
-// @Security		Bearer
+//	@Security		Bearer
 //
 //	@Produce		json
 //	@Param			id	path		int	true	"Unit ID"
@@ -53,17 +53,17 @@ func (h *Handler) HandleGetUnitById(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		ApiKeyAuth
-//	@Param			search			query	string	false	"Global search in name"
-//	@Param			name			query	string	false	"Filter by name (partial match)"
-//	@Param			created_after	query	string	false	"Created after date (YYYY-MM-DD)"
-//	@Param			created_before	query	string	false	"Created before date (YYYY-MM-DD)"
-//	@Param			sort_by			query	string	false	"Sort field" Enums(id,name,created_at)
-//	@Param			sort_order		query	string	false	"Sort direction" Enums(asc,desc)
-//	@Param			cursor			query	string	false	"Cursor for next page"
-//	@Param			limit			query	integer	false	"Number of items per page (max 100)" minimum(1) maximum(100)
-//	@Success		200	{object}	dto.SuccessUnitListResponse
-//	@Failure		400	{object}	dto.ErrorResponse
-//	@Failure		500	{object}	dto.ErrorResponse
+//	@Param			search			query		string	false	"Global search in name"
+//	@Param			name			query		string	false	"Filter by name (partial match)"
+//	@Param			created_after	query		string	false	"Created after date (YYYY-MM-DD)"
+//	@Param			created_before	query		string	false	"Created before date (YYYY-MM-DD)"
+//	@Param			sort_by			query		string	false	"Sort field"		Enums(id,name,created_at)
+//	@Param			sort_order		query		string	false	"Sort direction"	Enums(asc,desc)
+//	@Param			cursor			query		string	false	"Cursor for next page"
+//	@Param			limit			query		integer	false	"Number of items per page (max 100)"	minimum(1)	maximum(100)
+//	@Success		200				{object}	dto.SuccessUnitListResponse
+//	@Failure		400				{object}	dto.ErrorResponse
+//	@Failure		500				{object}	dto.ErrorResponse
 //	@Router			/v1/units [get]
 func (h *Handler) HandleGetUnitList(c *gin.Context) {
 	req := dto.NewPaginationRequestFromConfig(c, filter.SimpleFilterConfig)
@@ -86,10 +86,10 @@ func (h *Handler) HandleGetUnitList(c *gin.Context) {
 //	@Tags			Units
 //	@Accept			json
 //	@Produce		json
-//	@Param			unit	body	dto.Unit true	"Unit Item"
-//	 @Security     ApiKeyAuth
+//	@Param			unit	body	dto.Unit	true	"Unit Item"
+//	@Security		ApiKeyAuth
 //
-// @Security		Bearer
+//	@Security		Bearer
 //
 //	@Success		200	{object}	dto.SuccessUnitResponse
 //	@Failure		404	{object}	dto.ErrorResponse
@@ -124,11 +124,11 @@ func (h *Handler) HandlePostUnit(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //
-// @Param			id		path	int		true	"Unit ID"
+//	@Param			id	path	int	true	"Unit ID"
 //
-//	@Security     ApiKeyAuth
+//	@Security		ApiKeyAuth
 //
-// @Security		Bearer
+//	@Security		Bearer
 //
 //	@Success		200	"No Content"
 //	@Failure		404	{object}	dto.ErrorResponse
@@ -155,14 +155,14 @@ func (h *Handler) HandleDeleteUnit(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //
-// @Param			id		path	int		true	"Unit ID"
+//	@Param			id		path	int			true	"Unit ID"
 //
-//	@Param			unit	body	dto.Unit true	"Unit Item"
-//	 @Security     ApiKeyAuth
+//	@Param			unit	body	dto.Unit	true	"Unit Item"
+//	@Security		ApiKeyAuth
 //
-// @Security		Bearer
+//	@Security		Bearer
 //
-//	@Success		200 "No Content"
+//	@Success		200	"No Content"
 //	@Failure		404	{object}	dto.ErrorResponse
 //	@Router			/v1/units/{id} [patch]
 func (h *Handler) HandlePatchUnit(c *gin.Context) {
