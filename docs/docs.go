@@ -3605,12 +3605,14 @@ const docTemplate = `{
             "properties": {
                 "mobile": {
                     "type": "string",
-                    "minLength": 11
+                    "minLength": 11,
+                    "example": "09123456789"
                 },
                 "password": {
                     "type": "string",
                     "maxLength": 72,
-                    "minLength": 3
+                    "minLength": 3,
+                    "example": "123"
                 }
             }
         },

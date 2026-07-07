@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"warehouse/pkg/cache"
+
 	"github.com/lib/pq"
 	"gorm.io/gorm"
 )
@@ -15,11 +17,13 @@ var (
 	databaseTimeout = time.Second * 30
 )
 
-func NewRepository(db *gorm.DB) *Repository {
+func NewRepository(db *gorm.DB, c cache.Cache) *Repository {
+	rc := NewRepoCache(c)
+
 	return &Repository{
 		User:       NewUserRepository(db),
-		Category:   NewCategoryRepository(db),
-		Unit:       NewUnitRepository(db),
+		Category:   NewCategoryRepository(db, rc),
+		Unit:       NewUnitRepository(db, rc),
 		Department: NewDepartmentRepository(db),
 		Manager:    NewManagerRepository(db),
 		Product:    NewProductRepository(db),
@@ -27,9 +31,10 @@ func NewRepository(db *gorm.DB) *Repository {
 		Order:      NewOrderRepository(db),
 		Report:     NewReportRepository(db),
 		Activity:   NewActivityRepository(db),
-		Dashboard:  NewDashboardRepository(db),
+		Dashboard:  NewDashboardRepository(db, rc),
 	}
 }
+
 func isDuplicateKeyError(err error) bool {
 	if err == nil {
 		return false

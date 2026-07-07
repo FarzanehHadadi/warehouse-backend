@@ -8,14 +8,35 @@ import (
 )
 
 type dashboardRepository struct {
-	db *gorm.DB
+	db    *gorm.DB
+	cache *RepoCache
 }
 
-func NewDashboardRepository(db *gorm.DB) DashboardRepository {
-	return &dashboardRepository{db: db}
+func NewDashboardRepository(db *gorm.DB, rc *RepoCache) DashboardRepository {
+	return &dashboardRepository{db: db, cache: rc}
 }
 
 func (r *dashboardRepository) GetStats() (*models.DashboardStats, error) {
+	if r.cache != nil && r.cache.enabled() {
+		var stats models.DashboardStats
+		if err := r.cache.Get(cacheKeyDashboardStats, &stats); err == nil {
+			return &stats, nil
+		}
+	}
+
+	stats, err := r.loadStatsFromDB()
+	if err != nil {
+		return nil, err
+	}
+
+	if r.cache != nil && r.cache.enabled() {
+		_ = r.cache.Set(cacheKeyDashboardStats, stats, cacheTTLDashboardStats)
+	}
+
+	return stats, nil
+}
+
+func (r *dashboardRepository) loadStatsFromDB() (*models.DashboardStats, error) {
 	var stats models.DashboardStats
 	now := time.Now()
 	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())

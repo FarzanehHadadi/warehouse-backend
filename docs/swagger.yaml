@@ -422,9 +422,11 @@ definitions:
   dto.UserDto:
     properties:
       mobile:
+        example: "09123456789"
         minLength: 11
         type: string
       password:
+        example: "123"
         maxLength: 72
         minLength: 3
         type: string

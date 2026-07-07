@@ -3,7 +3,6 @@ package repository
 import (
 	"encoding/json"
 	"time"
-
 	"warehouse/pkg/logger"
 	"warehouse/pkg/models"
 
@@ -11,7 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// activityRepository implements ActivityRepository
 type activityRepository struct {
 	db *gorm.DB
 }

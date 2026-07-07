@@ -8,6 +8,7 @@ import (
 
 	"warehouse/pkg/api"
 	"warehouse/pkg/api/auth"
+	"warehouse/pkg/cache"
 	"warehouse/pkg/database"
 	"warehouse/pkg/events"
 	"warehouse/pkg/listeners"
@@ -52,15 +53,20 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
+	redisClient, err := database.InitRedis()
+	if err != nil {
+		log.Fatalf("Failed to connect to Redis: %v", err)
+	}
 
 	// Repository (now cleanly initialized in its own package)
-	repo := repository.NewRepository(db)
+	appCache := cache.NewRedisCache(redisClient)
+	repo := repository.NewRepository(db, appCache)
 	setupEventListeners(repo)
 	jwtSecretKey := os.Getenv("JWT_SECRET_KEY")
 	refreshSecretKey := os.Getenv("REFRESH_SECRET_KEY")
 	auth.LoadSecrets([]byte(jwtSecretKey), []byte(refreshSecretKey))
 	// API Router with handler
-	router := api.NewRouter(repo)
+	router := api.NewRouter(repo, redisClient)
 
 	// HTTP Server
 	const (
