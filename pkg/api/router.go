@@ -25,6 +25,7 @@ func NewRouter(repo *repository.Repository, redisClient *redis.Client) *Router {
 		redis:   redisClient,
 	}
 
+	r.Use(middleware.CORS())
 	r.setupRoutes()
 	return r
 }
